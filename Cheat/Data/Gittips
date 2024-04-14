@@ -1,0 +1,14 @@
+---
+Tags: {git}
+---
+- List Remote Branches
+	git branch -r
+- List Local Branches
+	git branch 
+- List Local/Remote Branches	
+	<git branch -a
+- Diff current branch to main branch	
+	git diff origin/main --name-only	
+	
+- Config (Global) Settings
+	git config --global -l

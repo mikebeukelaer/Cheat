@@ -1,0 +1,14 @@
+---
+Tags: {sql,button}
+---
+1. Add column to report. This column will be where the command button is displayed
+   - Make it a number type, basically this is a boolean flag. So the usual values are either 0 or 1. This is usually done in the report creator
+2. Optionally add an entry to the administration.storedprocs table
+    - This will be the stored procedure that is invoked when the command button is clicked. In other words this is the stored procedure the command button is 'bound to'
+3. Optionally add entries to the administration.storedprocparams table 
+    - These fields are the paramaters for the stored procedure you will be binding to.
+4. Add entry to administration.reportcommands with the new columnid and the (potentially) new storedproc id.
+    - The column id, came from step 1 and the stored proc id came from step 2. This is where we are associating the command button with the stored procedure.
+5. Optionally add entry to the administration.reportcolumnimages table with the new columnid
+6. Add entries to the administration.reportcommandbindings table with the new reportcommand id.
+    -  This is where we are associating the fields in the stored procedure which is used to generate the report and the stored procedure which performs some action when the button is clicked.

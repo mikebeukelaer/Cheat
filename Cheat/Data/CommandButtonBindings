@@ -1,0 +1,26 @@
+---
+Tags: {sql}
+---
+SELECT 
+	StoredProcName = sp.Name 
+,	CommandText = rc.Text
+,	ParameterName = spp.Name
+,   ReportField = rcb.Sourcefield
+,   SQLType = spp.SqlDbType
+
+FROM administration.reportcommands rc
+LEFT JOIN administration.StoredProcs sp ON
+(
+	rc.StoredProcId = sp.id
+)
+LEFT JOIN administration.StoredProcParams spp ON
+(
+	spp.storedprocid = sp.id
+)
+LEFT JOIN administration.ReportCommandBindings rcb ON
+(
+	rcb.storedprocparamid = spp.id AND
+	rcb.reportcommandid   = rc.id
+)
+
+WHERE rc.ColumnId = 11715 -- Note 11715 is the columnid of the command button

@@ -1,0 +1,7 @@
+---
+Tags: {sql,test, test2}
+---
+
+select name
+from sys.procedures
+where Object_definition(object_id) LIKE '%for xml%'
