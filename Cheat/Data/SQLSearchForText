@@ -1,5 +1,5 @@
 ---
-Tags: {sql,test, test2}
+Tags: [sql,test, test2]
 ---
 
 select name

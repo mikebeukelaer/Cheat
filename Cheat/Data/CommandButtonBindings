@@ -1,5 +1,5 @@
 ---
-Tags: {sql}
+Tags: [sql]
 ---
 SELECT 
 	StoredProcName = sp.Name 

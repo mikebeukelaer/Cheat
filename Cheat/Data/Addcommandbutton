@@ -1,5 +1,5 @@
 ---
-Tags: {sql,button}
+Tags: [sql,button]
 ---
 1. Add column to report. This column will be where the command button is displayed
    - Make it a number type, basically this is a boolean flag. So the usual values are either 0 or 1. This is usually done in the report creator

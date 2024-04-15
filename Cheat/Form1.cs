@@ -173,7 +173,69 @@ namespace Cheat
                 _initalState = true;
             }
         }
+        private void ShowHelp (TextBox textBox)
+        {
+            textBox.Clear();
+            textBox.Text += "--help" + Environment.NewLine;
+            textBox.Text += "   Shows this help information" + Environment.NewLine;
+            textBox.Text += "--list" + Environment.NewLine;
+            textBox.Text += "   Lists all cheats" + Environment.NewLine;
+            textBox.Text += "--config" + Environment.NewLine;
+            textBox.Text += "   Shows configuration locations" + Environment.NewLine;
+            textBox.Text += "--tags" + Environment.NewLine;
+            textBox.Text += "   Lists all known tags" + Environment.NewLine;
+            textBox.Text += "--listtags <tag>" + Environment.NewLine;
+            textBox.Text += "   Lists all cheats for the given <tag>" + Environment.NewLine;
 
+        }
+
+        private void ShowList(TextBox textBox)
+        {
+            textBox.Clear();
+            foreach (var f in _fileNames)
+            {
+                textBox.Text += f + Environment.NewLine;
+            }
+
+        }
+        private void ShowConfig(TextBox textBox)
+        {
+            textBox.Clear();
+            textBox.Text = "Configuration File:" + Environment.NewLine;
+            textBox.Text += "   " + _configfilePath + "Config.xml" + Environment.NewLine;
+            textBox.Text += "Data Directory:" + Environment.NewLine;
+            textBox.Text += "   " + _FilesLocation;
+        }
+        private void ShowTags(TextBox textBox)
+        {
+            textBox.Clear();
+            textBox.Text = "Current Tags:" + Environment.NewLine;
+            foreach (var t in _tags)
+            {
+                textBox.Text += "  " + t.Key + Environment.NewLine;
+            }
+        }
+        private void ShowListTags(TextBox textBox, TextBox input)
+        {
+            // Grab the paramater
+            //
+            if (input.Text.Length >= 11)
+            {
+                var param = input.Text.ToLower().Substring(11).Trim();
+
+                if (_tags.ContainsKey(param))
+                {
+                    textBox.Clear();
+                    textBox.Text = $"Commands with tag: {param}" + Environment.NewLine;
+                    foreach (var t in _tags[param])
+                    {
+                        textBox.Text += "  " + t + Environment.NewLine;
+                    }
+                }
+
+
+            }
+        }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.KeyCode == Keys.Escape)
@@ -190,75 +252,34 @@ namespace Cheat
             if(e.KeyCode== Keys.Enter)
             {
 
-                if (textBox1.Text.ToLower().TrimStart() == "-help")
+                if (textBox1.Text.ToLower().TrimStart() == "--help")
                 {
-                    textBox2.Clear();
-                    textBox2.Text += "-help" + Environment.NewLine;
-                    textBox2.Text += "   Shows this help information" + Environment.NewLine;
-                    textBox2.Text += "-list" + Environment.NewLine;
-                    textBox2.Text += "   Lists all cheats" + Environment.NewLine;
-                    textBox2.Text += "-config" + Environment.NewLine;
-                    textBox2.Text += "   Shows configuration locations" + Environment.NewLine;
-                    textBox2.Text += "-tags" + Environment.NewLine;
-                    textBox2.Text += "   Lists all known tags" + Environment.NewLine;
-                    textBox2.Text += "-listtags <tag>" + Environment.NewLine;
-                    textBox2.Text += "   Lists all cheats for the given <tag>" + Environment.NewLine;
-
+                    ShowHelp(textBox2);
                     return;
                 }
 
-                if (textBox1.Text.ToLower().TrimStart() == "-list")
+                if (textBox1.Text.ToLower().TrimStart() == "--list")
                 {
-                    textBox2.Clear();
-                    foreach (var f in _fileNames)
-                    {
-                        textBox2.Text += f + Environment.NewLine;
-                    }
+                    ShowList(textBox2);
                     return;
                 }
 
-                if (textBox1.Text.ToLower().TrimStart() == "-config")
+                if (textBox1.Text.ToLower().TrimStart() == "--config")
                 {
-                    textBox2.Clear();
-                    textBox2.Text = "Configuration File:" + Environment.NewLine;
-                    textBox2.Text += "   " + _configfilePath + "Config.xml" + Environment.NewLine;
-                    textBox2.Text += "Data Directory:" + Environment.NewLine;
-                    textBox2.Text += "   " + _FilesLocation;
+
+                    ShowConfig(textBox2);
                     return;
                 }
 
-                if (textBox1.Text.ToLower().TrimStart() == "-tags")
+                if (textBox1.Text.ToLower().TrimStart() == "--tags")
                 {
-                    textBox2.Clear();
-                    textBox2.Text = "Current Tags:" + Environment.NewLine;
-                    foreach(var t in _tags)
-                    {
-                        textBox2.Text += "  " + t.Key + Environment.NewLine;
-                    }
+                    ShowTags(textBox2);
                     return;
                 }
 
-                if ( textBox1.Text.Length >= 9 &&  textBox1.Text.ToLower().Substring(0,9).TrimStart() == "-listtags")
+                if ( textBox1.Text.Length >= 10 &&  textBox1.Text.ToLower().Substring(0,10).TrimStart() == "--listtags")
                 {
-                    // Grab the paramater
-                    //
-                    if(textBox1.Text.Length >= 10)
-                    {
-                        var param = textBox1.Text.ToLower().Substring(10).Trim();
-
-                        if (_tags.ContainsKey(param))
-                        {
-                            textBox2.Clear();
-                            textBox2.Text = $"Commands with tag: {param}" + Environment.NewLine;
-                            foreach (var t in _tags[param])
-                            {
-                                textBox2.Text += "  " + t + Environment.NewLine;
-                            }
-                        }
-
-                        
-                    }
-                    
+                    ShowListTags(textBox2,textBox1);                    
                     return;
                 }
 
@@ -333,7 +354,7 @@ namespace Cheat
                         {
                             
                             var tmp = fileContents[1].Substring(space, fileContents[1].Length - space);
-                            var leftBracket = tmp.IndexOf('{');
+                            var leftBracket = tmp.IndexOf('[');
 
                             var taglist = fileContents[1].Substring(leftBracket + space + 1, fileContents[1].Length - leftBracket - 2 - space);
 
