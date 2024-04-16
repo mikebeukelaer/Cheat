@@ -1,0 +1,5 @@
+---
+Tags: [rebex,wince]
+---
+	using RebexHttpRequest = Rebex.Net.HttpRequest;
+	using RebexHttpResponse = Rebex.Net.HttpResponse;

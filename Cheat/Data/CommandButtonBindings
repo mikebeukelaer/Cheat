@@ -1,9 +1,18 @@
 ---
 Tags: [sql]
 ---
+use RDSSystem
+
+DECLARE @reportId int = 870
+DECLARE @commandButtonColumnId int = 11715
+
+select * from administration.reports where id=@reportId
+select * from administration.reportColumns where reportid=@reportId
+
 SELECT 
 	StoredProcName = sp.Name 
 ,	CommandText = rc.Text
+,   Expression = rc.Expression
 ,	ParameterName = spp.Name
 ,   ReportField = rcb.Sourcefield
 ,   SQLType = spp.SqlDbType
@@ -23,4 +32,4 @@ LEFT JOIN administration.ReportCommandBindings rcb ON
 	rcb.reportcommandid   = rc.id
 )
 
-WHERE rc.ColumnId = 11715 -- Note 11715 is the columnid of the command button
+WHERE rc.ColumnId = @commandButtonColumnId -- Note 11715 is the columnid of the command button

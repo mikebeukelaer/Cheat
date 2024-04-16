@@ -24,28 +24,44 @@ namespace Cheat
 
         private string[] _fileNames;
         private Dictionary<string,List<string>> _tags = new Dictionary<string, List<string>>();
+        private bool _includeSubDirectories = true;
         public Form1()
         {
             InitializeComponent();
             
         }
-        private void DirSearch(string sDir, string rootDir)
+        private void DirSearch(string sDir, string rootDir, List<string> list)
         {
+
             try
             {
                 foreach (string f in Directory.GetFiles(sDir))
                 {
-                    var tag = rootDir == Path.GetFileName(sDir) ? string.Empty : Path.GetFileName(sDir);
+                    var dirName = rootDir == Path.GetFileName(sDir) ? string.Empty : Path.GetFileName(sDir);
 
-                    Console.WriteLine($"File {Path.GetFileName(f)} Tag {tag}");
+                    //Console.WriteLine($"File {Path.GetFileName(f)}   Dir {Path.GetFileName(sDir)}");
+                    if(dirName == string.Empty)
+                    {
+                        Console.WriteLine($"{Path.GetFileName(f)}");
+                        list.Add($"{Path.GetFileName(f)}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{Path.GetFileName(sDir)}/{Path.GetFileName(f)}");
+                        list.Add($"{Path.GetFileName(sDir)}/{Path.GetFileName(f)}");
+                    }
 
-                    
+                    BuildTagList(f);
 
                 }
-                foreach (string d in Directory.GetDirectories(sDir))
+                if (_includeSubDirectories)
                 {
-                    DirSearch(d,rootDir);
+                    foreach (string d in Directory.GetDirectories(sDir))
+                    {
+                        DirSearch(d, rootDir, list);
+                    }
                 }
+
             }
             catch (System.Exception excpt)
             {
@@ -63,27 +79,28 @@ namespace Cheat
 
             var files = Directory.GetFiles(_FilesLocation);
             var t = Directory.EnumerateFiles(_FilesLocation, "*.*", SearchOption.AllDirectories);
-            DirSearch(_FilesLocation,Path.GetFileName(_FilesLocation));
-
+            var tmplist = new List<string>();
+            DirSearch(_FilesLocation,Path.GetFileName(_FilesLocation),tmplist);
+            var x = tmplist.ToArray();
             var tmp = new List<string>();
-            foreach(var fi in t)
-            {
-                tmp.Add(Path.GetFileName(fi));
-                BuildTagList(fi);
-            }
+            //foreach(var fi in t)
+            //{
+            //    tmp.Add(Path.GetFileName(fi));
+            //    BuildTagList(fi);
+            //}
 
-            _fileNames = new string[files.Length];
+            //_fileNames = new string[files.Length];
 
-            for(int i=0; i<files.Length;i++)
-            {
-                _fileNames[i] = Path.GetFileName(files[i]);
-            }
+            //for(int i=0; i<files.Length;i++)
+            //{
+            //    _fileNames[i] = Path.GetFileName(files[i]);
+            //}
 
             textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
             
             AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
-            suggestions.AddRange(_fileNames);
+            suggestions.AddRange(x);
             textBox1.AutoCompleteCustomSource = suggestions;
 
             textBox1.GotFocus += TextBox1_GotFocus;
@@ -215,6 +232,11 @@ namespace Cheat
                 textBox.Text += "  " + t.Key + Environment.NewLine;
             }
         }
+        private void ShowVersion(TextBox textBox)
+        {
+            textBox.Clear();
+            textBox.Text = Environment.NewLine + $" Version :{Application.ProductVersion}";
+        }
         private void ShowListTags(TextBox textBox, TextBox input)
         {
             // Grab the paramater
@@ -226,7 +248,7 @@ namespace Cheat
                 if (_tags.ContainsKey(param))
                 {
                     textBox.Clear();
-                    textBox.Text = $"Commands with tag: {param}" + Environment.NewLine;
+                    textBox.Text = $"Cheats with tag: {param}" + Environment.NewLine;
                     foreach (var t in _tags[param])
                     {
                         textBox.Text += "  " + t + Environment.NewLine;
@@ -283,9 +305,13 @@ namespace Cheat
                     return;
                 }
 
+                if(textBox1.Text.ToLower().TrimStart() == "--version"){
+                    ShowVersion(textBox2);
+                    return;
+                }
 
                 //var tag = _locales[textBox1.Text.TrimStart()];
-                var appender = string.Empty;
+                    var appender = string.Empty;
                 if (File.Exists(_FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
                 {
                     textBox2.Clear();
