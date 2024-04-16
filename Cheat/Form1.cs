@@ -284,7 +284,6 @@ namespace Cheat
                 }
 
 
-
                 //var tag = _locales[textBox1.Text.TrimStart()];
                 var appender = string.Empty;
                 if (File.Exists(_FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
