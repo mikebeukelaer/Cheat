@@ -51,7 +51,7 @@ namespace Cheat
                         list.Add($"{Path.GetFileName(sDir)}/{Path.GetFileName(f)}");
                     }
 
-                    BuildTagList(f);
+                    BuildTagList(f, Path.GetFileName(sDir));
 
                 }
                 if (_includeSubDirectories)
@@ -153,10 +153,10 @@ namespace Cheat
             }
             Properties.Settings.Default.Save();
         }
-        private void BuildTagList(string fileName)
+        private void BuildTagList(string fileName, string pathName)
         {
             var contents = File.ReadAllLines(fileName);
-            var fName = Path.GetFileName(fileName);
+            var fName =  pathName == string.Empty ? Path.GetFileName(fileName) : $"{pathName}/{Path.GetFileName(fileName)}";
             var tags = ExtractTags(contents);
 
             if(tags != null)
@@ -254,8 +254,6 @@ namespace Cheat
                         textBox.Text += "  " + t + Environment.NewLine;
                     }
                 }
-
-
             }
         }
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
