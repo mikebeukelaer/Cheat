@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace Cheat
                         list.Add($"{Path.GetFileName(sDir)}/{Path.GetFileName(f)}");
                     }
 
-                    BuildTagList(f, Path.GetFileName(sDir));
+                    BuildTagList(f, Path.GetFileName(sDir), rootDir);
 
                 }
                 if (_includeSubDirectories)
@@ -153,10 +154,11 @@ namespace Cheat
             }
             Properties.Settings.Default.Save();
         }
-        private void BuildTagList(string fileName, string pathName)
+        private void BuildTagList(string fileName, string pathName, string rootDir)
         {
             var contents = File.ReadAllLines(fileName);
-            var fName =  pathName == string.Empty ? Path.GetFileName(fileName) : $"{pathName}/{Path.GetFileName(fileName)}";
+            var pname = Path.GetFileName(fileName);
+            var fName =  pathName == rootDir ? Path.GetFileName(fileName) : $"{pathName}/{Path.GetFileName(fileName)}";
             var tags = ExtractTags(contents);
 
             if(tags != null)
@@ -256,6 +258,19 @@ namespace Cheat
                 }
             }
         }
+
+        private void ShowEditor(TextBox input)
+        {
+            // Grab the paramater
+            //
+            if (input.Text.Length >= 6)
+            {
+                var param = input.Text.ToLower().Substring(6).Trim();
+                Process.Start("notepad.exe", $"{_FilesLocation}\\{param}");
+                Console.WriteLine($"{_FilesLocation}\\{param}");
+            }
+        }
+
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.KeyCode == Keys.Escape)
@@ -308,8 +323,14 @@ namespace Cheat
                     return;
                 }
 
+                if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--edit")
+                {
+                    ShowEditor(textBox1);
+                    return;
+                }
+
                 //var tag = _locales[textBox1.Text.TrimStart()];
-                    var appender = string.Empty;
+                var appender = string.Empty;
                 if (File.Exists(_FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
                 {
                     textBox2.Clear();
