@@ -76,7 +76,9 @@ namespace Cheat
             var configfile = new XmlDocument();
 
             configfile.Load(_configfilePath + "Config.xml");
-            _FilesLocation = configfile.DocumentElement.SelectSingleNode("/cheatsfolder").InnerText;
+            _FilesLocation = configfile.DocumentElement.SelectSingleNode("cheatsfolder").InnerText;
+            _includeSubDirectories = configfile.DocumentElement.SelectSingleNode("includeSubDir").InnerText.ToLower() == "true" ? true : false; 
+
 
             var files = Directory.GetFiles(_FilesLocation);
             var t = Directory.EnumerateFiles(_FilesLocation, "*.*", SearchOption.AllDirectories);

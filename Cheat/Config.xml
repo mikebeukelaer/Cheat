@@ -1,2 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<cheatsfolder>..\..\Data</cheatsfolder>
+<config>
+  <cheatsfolder>..\..\Data</cheatsfolder>
+  <includeSubDir>true</includeSubDir>
+</config>
