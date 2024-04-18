@@ -84,7 +84,7 @@ namespace Cheat
             var t = Directory.EnumerateFiles(_FilesLocation, "*.*", SearchOption.AllDirectories);
             var tmplist = new List<string>();
             DirSearch(_FilesLocation,Path.GetFileName(_FilesLocation),tmplist);
-            var x = tmplist.ToArray();
+            _fileNames = tmplist.ToArray();
             var tmp = new List<string>();
             //foreach(var fi in t)
             //{
@@ -103,7 +103,7 @@ namespace Cheat
             textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
             
             AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
-            suggestions.AddRange(x);
+            suggestions.AddRange(_fileNames);
             textBox1.AutoCompleteCustomSource = suggestions;
 
             textBox1.GotFocus += TextBox1_GotFocus;
