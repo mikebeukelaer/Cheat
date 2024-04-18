@@ -75,42 +75,41 @@ namespace Cheat
             _configfilePath = AppDomain.CurrentDomain.BaseDirectory;
             var configfile = new XmlDocument();
 
-            configfile.Load(_configfilePath + "Config.xml");
-            _FilesLocation = configfile.DocumentElement.SelectSingleNode("cheatsfolder").InnerText;
-            _includeSubDirectories = configfile.DocumentElement.SelectSingleNode("includeSubDir").InnerText.ToLower() == "true" ? true : false; 
+            if (File.Exists($"{_configfilePath}Config.xml"))
+            {
+                configfile.Load(_configfilePath + "Config.xml");
 
 
-            var files = Directory.GetFiles(_FilesLocation);
-            var t = Directory.EnumerateFiles(_FilesLocation, "*.*", SearchOption.AllDirectories);
-            var tmplist = new List<string>();
-            DirSearch(_FilesLocation,Path.GetFileName(_FilesLocation),tmplist);
-            _fileNames = tmplist.ToArray();
-            var tmp = new List<string>();
-            //foreach(var fi in t)
-            //{
-            //    tmp.Add(Path.GetFileName(fi));
-            //    BuildTagList(fi);
-            //}
+                _FilesLocation = configfile.DocumentElement.SelectSingleNode("cheatsfolder").InnerText;
+                _includeSubDirectories = configfile.DocumentElement.SelectSingleNode("includeSubDir").InnerText.ToLower() == "true" ? true : false;
 
-            //_fileNames = new string[files.Length];
 
-            //for(int i=0; i<files.Length;i++)
-            //{
-            //    _fileNames[i] = Path.GetFileName(files[i]);
-            //}
+                var files = Directory.GetFiles(_FilesLocation);
+                var t = Directory.EnumerateFiles(_FilesLocation, "*.*", SearchOption.AllDirectories);
+                var tmplist = new List<string>();
+                DirSearch(_FilesLocation, Path.GetFileName(_FilesLocation), tmplist);
+                _fileNames = tmplist.ToArray();
+                var tmp = new List<string>();
 
-            textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            
-            AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
-            suggestions.AddRange(_fileNames);
-            textBox1.AutoCompleteCustomSource = suggestions;
 
-            textBox1.GotFocus += TextBox1_GotFocus;
-            textBox1.Text = "Start typing...";
-            textBox1.Select(0, 0);
-            SetLocation();
+                textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
 
+                AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
+                suggestions.AddRange(_fileNames);
+                textBox1.AutoCompleteCustomSource = suggestions;
+
+                textBox1.GotFocus += TextBox1_GotFocus;
+                textBox1.Text = "Start typing...";
+                textBox1.Select(0, 0);
+                SetLocation();
+
+            }
+            else
+            {
+                MessageBox.Show($"Configuration file : {_configfilePath}Config.xml not found!");
+                Application.Exit();
+            }
         }
         private void SetLocation()
         {
