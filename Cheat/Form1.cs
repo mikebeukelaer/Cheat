@@ -207,6 +207,8 @@ namespace Cheat
             textBox.Text += "   Lists all known tags" + Environment.NewLine;
             textBox.Text += "--listtags <tag>" + Environment.NewLine;
             textBox.Text += "   Lists all cheats for the given <tag>" + Environment.NewLine;
+            textBox.Text += "--version" + Environment.NewLine;
+            textBox.Text += "   Shows version info" + Environment.NewLine;
 
         }
 
