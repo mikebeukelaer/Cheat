@@ -75,47 +75,78 @@ namespace Cheat
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            _configfilePath = AppDomain.CurrentDomain.BaseDirectory;
-            var configfile = new XmlDocument();
-
-            if (File.Exists($"{_configfilePath}Config.xml"))
+            try
             {
-                configfile.Load(_configfilePath + "Config.xml");
+                _configfilePath = AppDomain.CurrentDomain.BaseDirectory;
+                var configfile = new XmlDocument();
+
+                if (File.Exists($"{_configfilePath}Config.xml"))
+                {
+                    configfile.Load(_configfilePath + "Config.xml");
+
+                    _FilesLocation = configfile.DocumentElement.SelectSingleNode("cheatsfolder")?.InnerText;
+                    if (_FilesLocation == null)
+                    {
+                       
+                        throw new Exception("Missing node cheatsfoler in config file.");
+                    }
+                    _includeSubDirectories = 
+                        configfile.DocumentElement.SelectSingleNode("includeSubDir").InnerText.ToLower() == "true" ? true : false;
+                    _editor = configfile.DocumentElement.SelectSingleNode("editor")?.InnerText == null ?
+                        "notepad.exe" :
+                        configfile.DocumentElement.SelectSingleNode("editor").InnerText;
 
 
-                _FilesLocation = configfile.DocumentElement.SelectSingleNode("cheatsfolder").InnerText;
-                _includeSubDirectories = 
-                    configfile.DocumentElement.SelectSingleNode("includeSubDir").InnerText.ToLower() == "true" ? true : false;
-                _editor = configfile.DocumentElement.SelectSingleNode("editor")?.InnerText == null ?
-                    "notepad.exe" : 
-                    configfile.DocumentElement.SelectSingleNode("editor").InnerText;
+                    var backcolor = configfile.DocumentElement.SelectSingleNode("backcolor")?.InnerText == null ?
+                        "32,32,32" : configfile.DocumentElement.SelectSingleNode("backcolor")?.InnerText;
 
-                var files = Directory.GetFiles(_FilesLocation);
-                var t = Directory.EnumerateFiles(_FilesLocation, "*.*", SearchOption.AllDirectories);
-                var tmplist = new List<string>();
-                DirSearch(_FilesLocation, Path.GetFileName(_FilesLocation), tmplist);
-                _fileNames = tmplist.ToArray();
-                var tmp = new List<string>();
+                    var tmp = backcolor.Split(',');
+                    var backColor = Color.FromArgb(int.Parse(tmp[0]), int.Parse(tmp[1]), int.Parse(tmp[2]));
 
+                    var forecolor = configfile.DocumentElement.SelectSingleNode("forecolor")?.InnerText == null ?
+                        "32,32,32" : configfile.DocumentElement.SelectSingleNode("forecolor")?.InnerText;
 
-                textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                    tmp = forecolor.Split(',');
+                    var foreColor = Color.FromArgb(int.Parse(tmp[0]), int.Parse(tmp[1]), int.Parse(tmp[2]));
 
-                AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
-                suggestions.AddRange(_fileNames);
-                textBox1.AutoCompleteCustomSource = suggestions;
+                    this.BackColor = backColor;
+                    textBox1.BackColor = backColor;
+                    textBox1.ForeColor = foreColor;
+                    textBox2.ForeColor = foreColor;
+                    textBox2.BackColor = backColor;
 
-                textBox1.GotFocus += TextBox1_GotFocus;
-                textBox1.Text = "Start typing...";
-                textBox1.Select(0, 0);
-                SetLocation();
+                    var files = Directory.GetFiles(_FilesLocation);
+                
+                    var tmplist = new List<string>();
+                    DirSearch(_FilesLocation, Path.GetFileName(_FilesLocation), tmplist);
+                    _fileNames = tmplist.ToArray();
+               
+                    textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
 
+                    AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
+                    suggestions.AddRange(_fileNames);
+                    textBox1.AutoCompleteCustomSource = suggestions;
+
+                    textBox1.GotFocus += TextBox1_GotFocus;
+                    textBox1.Text = "Start typing...";
+                    textBox1.Select(0, 0);
+
+                    SetLocation();
+
+                }
+                else
+                {
+                    MessageBox.Show($"Configuration file : {_configfilePath}Config.xml not found!");
+                    Application.Exit();
+                }
             }
-            else
+            catch( Exception ex )
             {
-                MessageBox.Show($"Configuration file : {_configfilePath}Config.xml not found!");
+                MessageBox.Show( ex.Message );
                 Application.Exit();
             }
+           
         }
         private void SetLocation()
         {
@@ -210,7 +241,7 @@ namespace Cheat
             textBox.Text += "   Shows configuration locations" + Environment.NewLine;
             textBox.Text += "--tags" + Environment.NewLine;
             textBox.Text += "   Lists all known tags" + Environment.NewLine;
-            textBox.Text += "--listtags <tag>" + Environment.NewLine;
+            textBox.Text += "--listcheats <tag>" + Environment.NewLine;
             textBox.Text += "   Lists all cheats for the given <tag>" + Environment.NewLine;
             textBox.Text += "--edit <cheat>" + Environment.NewLine;
             textBox.Text += "   Opens the cheat in the configured editor <tag>" + Environment.NewLine;
@@ -232,9 +263,19 @@ namespace Cheat
         {
             textBox.Clear();
             textBox.Text = "Configuration File:" + Environment.NewLine;
-            textBox.Text += "   " + _configfilePath + "Config.xml" + Environment.NewLine;
-            textBox.Text += "Data Directory:" + Environment.NewLine;
-            textBox.Text += "   " + _FilesLocation;
+            textBox.Text += _configfilePath + "Config.xml" + Environment.NewLine;
+            textBox.Text += "----------------------------------" + Environment.NewLine + Environment.NewLine;
+            var contents = File.ReadAllLines(_configfilePath + "Config.xml");
+
+            foreach( var line in contents)
+            {
+                textBox2.Text += line + Environment.NewLine;
+            }
+
+            textBox.Text += Environment.NewLine + "----------------------------------" + Environment.NewLine;
+
+        //    textBox.Text += "Data Directory:" + Environment.NewLine;
+        //    textBox.Text += "   " + _FilesLocation;
         }
         private void ShowTags(TextBox textBox)
         {
@@ -254,9 +295,9 @@ namespace Cheat
         {
             // Grab the paramater
             //
-            if (input.Text.Length >= 11)
+            if (input.Text.Length >= 13)
             {
-                var param = input.Text.ToLower().Substring(11).Trim();
+                var param = input.Text.ToLower().Substring(13).Trim();
 
                 if (_tags.ContainsKey(param))
                 {
@@ -323,7 +364,7 @@ namespace Cheat
                     return;
                 }
 
-                if ( textBox1.Text.Length >= 10 &&  textBox1.Text.ToLower().Substring(0,10).TrimStart() == "--listtags")
+                if ( textBox1.Text.Length >= 12 &&  textBox1.Text.ToLower().Substring(0,12).TrimStart() == "--listcheats")
                 {
                     ShowListTags(textBox2,textBox1);                    
                     return;
@@ -366,8 +407,6 @@ namespace Cheat
                         }
                     }
                     
-
-                   
                     Clipboard.SetText(textBox2.Text);
                     
                 }
@@ -396,8 +435,6 @@ namespace Cheat
             // Tags {tag1, tag2} <newline>
             // --- <newline>
             //
-
-
             if (fileContents.Length > 0)
             {
                 if(fileContents[0] == "---" && fileContents[2] == "---")

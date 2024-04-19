@@ -3,4 +3,6 @@
   <cheatsfolder>..\..\Data</cheatsfolder>
   <includeSubDir>true</includeSubDir>
   <editor>c:\windows\notepad.exe</editor>
+  <backcolor>32,32,32</backcolor>
+  <forecolor>255,255,255</forecolor> 
 </config>
