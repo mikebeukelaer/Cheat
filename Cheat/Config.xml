@@ -2,4 +2,5 @@
 <config>
   <cheatsfolder>..\..\Data</cheatsfolder>
   <includeSubDir>true</includeSubDir>
+  <editor>c:\windows\notepad.exe</editor>
 </config>

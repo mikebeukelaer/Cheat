@@ -26,6 +26,9 @@ namespace Cheat
         private string[] _fileNames;
         private Dictionary<string,List<string>> _tags = new Dictionary<string, List<string>>();
         private bool _includeSubDirectories = true;
+        private string _editor = string.Empty;
+
+
         public Form1()
         {
             InitializeComponent();
@@ -81,8 +84,11 @@ namespace Cheat
 
 
                 _FilesLocation = configfile.DocumentElement.SelectSingleNode("cheatsfolder").InnerText;
-                _includeSubDirectories = configfile.DocumentElement.SelectSingleNode("includeSubDir").InnerText.ToLower() == "true" ? true : false;
-
+                _includeSubDirectories = 
+                    configfile.DocumentElement.SelectSingleNode("includeSubDir").InnerText.ToLower() == "true" ? true : false;
+                _editor = configfile.DocumentElement.SelectSingleNode("editor")?.InnerText == null ?
+                    "notepad.exe" : 
+                    configfile.DocumentElement.SelectSingleNode("editor").InnerText;
 
                 var files = Directory.GetFiles(_FilesLocation);
                 var t = Directory.EnumerateFiles(_FilesLocation, "*.*", SearchOption.AllDirectories);
@@ -206,6 +212,8 @@ namespace Cheat
             textBox.Text += "   Lists all known tags" + Environment.NewLine;
             textBox.Text += "--listtags <tag>" + Environment.NewLine;
             textBox.Text += "   Lists all cheats for the given <tag>" + Environment.NewLine;
+            textBox.Text += "--edit <cheat>" + Environment.NewLine;
+            textBox.Text += "   Opens the cheat in the configured editor <tag>" + Environment.NewLine;
             textBox.Text += "--version" + Environment.NewLine;
             textBox.Text += "   Shows version info" + Environment.NewLine;
 
@@ -269,7 +277,7 @@ namespace Cheat
             if (input.Text.Length >= 6)
             {
                 var param = input.Text.ToLower().Substring(6).Trim();
-                Process.Start("notepad.exe", $"{_FilesLocation}\\{param}");
+                Process.Start(_editor, $"{_FilesLocation}\\{param}");
                 Console.WriteLine($"{_FilesLocation}\\{param}");
             }
         }
