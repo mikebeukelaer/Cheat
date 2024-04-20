@@ -230,6 +230,36 @@ namespace Cheat
                 _initalState = true;
             }
         }
+        
+        private void ShowSearch(TextBox textBox, TextBox input)
+        {
+            // Grab the paramater
+            //
+            if (input.Text.Length >= 7)
+            {
+                var param = input.Text.ToLower().Substring(7).Trim();
+                textBox.Clear();
+                foreach(var cheat in _fileNames)
+                {
+                   
+                    var contents = File.ReadAllLines($"{_FilesLocation}\\{cheat}");
+                    foreach(var line in contents)
+                    {
+                   
+                        if (line.ToLower().Contains(param))
+                        {
+                            textBox.Text += cheat + Environment.NewLine;
+                            break;
+                        }
+                    }
+                }
+
+
+
+            }
+        }
+        
+        
         private void ShowHelp (TextBox textBox)
         {
             textBox.Clear();
@@ -245,6 +275,8 @@ namespace Cheat
             textBox.Text += "   Lists all cheats for the given <tag>" + Environment.NewLine;
             textBox.Text += "--edit <cheat>" + Environment.NewLine;
             textBox.Text += "   Opens the cheat in the configured editor <tag>" + Environment.NewLine;
+            textBox.Text += "--find <text>" + Environment.NewLine;
+            textBox.Text += "   Lists all cheats containing <text>" + Environment.NewLine;
             textBox.Text += "--version" + Environment.NewLine;
             textBox.Text += "   Shows version info" + Environment.NewLine;
 
@@ -378,6 +410,12 @@ namespace Cheat
                 if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--edit")
                 {
                     ShowEditor(textBox1);
+                    return;
+                }
+
+                if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--find")
+                {
+                    ShowSearch(textBox2,textBox1);
                     return;
                 }
 
