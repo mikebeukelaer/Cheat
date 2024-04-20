@@ -28,7 +28,7 @@ namespace Cheat
                 {
                     configfile.Load(ConfigFilePath + "Config.xml");
 
-                    var _FilesLocation = configfile.DocumentElement.SelectSingleNode("cheatsfoldera")?.InnerText;
+                    var _FilesLocation = configfile.DocumentElement.SelectSingleNode("cheatsfolder")?.InnerText;
                     FilesLocation = _FilesLocation;
                     if (_FilesLocation == null)
                     {
