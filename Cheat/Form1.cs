@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 
 namespace Cheat
 {
@@ -17,23 +12,16 @@ namespace Cheat
     {
         private bool _mouseDown;
         private Point _lastLocation;
-
-        private string _FilesLocation;
-
         private bool _initalState = true;
-        private string _configfilePath;
-
+      
         private string[] _fileNames;
         private Dictionary<string,List<string>> _tags = new Dictionary<string, List<string>>();
-        private bool _includeSubDirectories = true;
-        private string _editor = string.Empty;
-
 
         public Form1()
         {
             InitializeComponent();
-            
         }
+        
         private void DirSearch(string sDir, string rootDir, List<string> list)
         {
 
@@ -58,7 +46,7 @@ namespace Cheat
                     BuildTagList(f, Path.GetFileName(sDir), rootDir);
 
                 }
-                if (_includeSubDirectories)
+                if (Configuration.IncludeSubDirectories)
                 {
                     foreach (string d in Directory.GetDirectories(sDir))
                     {
@@ -77,77 +65,39 @@ namespace Cheat
         {
             try
             {
-                _configfilePath = AppDomain.CurrentDomain.BaseDirectory;
-                var configfile = new XmlDocument();
+                this.BackColor = Configuration.BackColor;
+                textBox1.BackColor = Configuration.BackColor;
+                textBox1.ForeColor = Configuration.ForeColor;
+                textBox2.ForeColor = Configuration.ForeColor;
+                textBox2.BackColor = Configuration.BackColor;
 
-                if (File.Exists($"{_configfilePath}Config.xml"))
-                {
-                    configfile.Load(_configfilePath + "Config.xml");
+                var files = Directory.GetFiles(Configuration.FilesLocation);
 
-                    _FilesLocation = configfile.DocumentElement.SelectSingleNode("cheatsfolder")?.InnerText;
-                    if (_FilesLocation == null)
-                    {
-                       
-                        throw new Exception("Missing node cheatsfoler in config file.");
-                    }
-                    _includeSubDirectories = 
-                        configfile.DocumentElement.SelectSingleNode("includeSubDir").InnerText.ToLower() == "true" ? true : false;
-                    _editor = configfile.DocumentElement.SelectSingleNode("editor")?.InnerText == null ?
-                        "notepad.exe" :
-                        configfile.DocumentElement.SelectSingleNode("editor").InnerText;
+                var tmplist = new List<string>();
+                DirSearch(Configuration.FilesLocation, Path.GetFileName(Configuration.FilesLocation), tmplist);
+                _fileNames = tmplist.ToArray();
 
+                textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
 
-                    var backcolor = configfile.DocumentElement.SelectSingleNode("backcolor")?.InnerText == null ?
-                        "32,32,32" : configfile.DocumentElement.SelectSingleNode("backcolor")?.InnerText;
+                AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
+                suggestions.AddRange(_fileNames);
+                textBox1.AutoCompleteCustomSource = suggestions;
 
-                    var tmp = backcolor.Split(',');
-                    var backColor = Color.FromArgb(int.Parse(tmp[0]), int.Parse(tmp[1]), int.Parse(tmp[2]));
+                textBox1.Text = "Start typing...";
+                textBox1.Select(0, 0);
 
-                    var forecolor = configfile.DocumentElement.SelectSingleNode("forecolor")?.InnerText == null ?
-                        "32,32,32" : configfile.DocumentElement.SelectSingleNode("forecolor")?.InnerText;
+                SetLocation();
 
-                    tmp = forecolor.Split(',');
-                    var foreColor = Color.FromArgb(int.Parse(tmp[0]), int.Parse(tmp[1]), int.Parse(tmp[2]));
-
-                    this.BackColor = backColor;
-                    textBox1.BackColor = backColor;
-                    textBox1.ForeColor = foreColor;
-                    textBox2.ForeColor = foreColor;
-                    textBox2.BackColor = backColor;
-
-                    var files = Directory.GetFiles(_FilesLocation);
-                
-                    var tmplist = new List<string>();
-                    DirSearch(_FilesLocation, Path.GetFileName(_FilesLocation), tmplist);
-                    _fileNames = tmplist.ToArray();
-               
-                    textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                    textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
-
-                    AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
-                    suggestions.AddRange(_fileNames);
-                    textBox1.AutoCompleteCustomSource = suggestions;
-
-                    textBox1.GotFocus += TextBox1_GotFocus;
-                    textBox1.Text = "Start typing...";
-                    textBox1.Select(0, 0);
-
-                    SetLocation();
-
-                }
-                else
-                {
-                    MessageBox.Show($"Configuration file : {_configfilePath}Config.xml not found!");
-                    Application.Exit();
-                }
             }
             catch( Exception ex )
             {
-                MessageBox.Show( ex.Message );
+                MessageBox.Show( ex.InnerException.Message );
                 Application.Exit();
             }
            
         }
+        
         private void SetLocation()
         {
             if (Properties.Settings.Default.Maximized)
@@ -167,6 +117,7 @@ namespace Cheat
                 Location = Properties.Settings.Default.Location;
             }
         }
+        
         private void SaveLocation()
         {
             if (WindowState == FormWindowState.Maximized)
@@ -192,6 +143,7 @@ namespace Cheat
             }
             Properties.Settings.Default.Save();
         }
+
         private void BuildTagList(string fileName, string pathName, string rootDir)
         {
             var contents = File.ReadAllLines(fileName);
@@ -214,12 +166,6 @@ namespace Cheat
                     
                 }
             }
-
-        }
-
-        private void TextBox1_GotFocus(object sender, EventArgs e)
-        {
-            
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -233,7 +179,7 @@ namespace Cheat
         
         private void ShowSearch(TextBox textBox, TextBox input)
         {
-            // Grab the paramater
+            // Grab the parameter
             //
             if (input.Text.Length >= 7)
             {
@@ -242,7 +188,7 @@ namespace Cheat
                 foreach(var cheat in _fileNames)
                 {
                    
-                    var contents = File.ReadAllLines($"{_FilesLocation}\\{cheat}");
+                    var contents = File.ReadAllLines($"{Configuration.FilesLocation}\\{cheat}");
                     foreach(var line in contents)
                     {
                    
@@ -291,13 +237,14 @@ namespace Cheat
             }
 
         }
+        
         private void ShowConfig(TextBox textBox)
         {
             textBox.Clear();
             textBox.Text = "Configuration File:" + Environment.NewLine;
-            textBox.Text += _configfilePath + "Config.xml" + Environment.NewLine;
+            textBox.Text += Configuration.ConfigFilePath + "Config.xml" + Environment.NewLine;
             textBox.Text += "----------------------------------" + Environment.NewLine + Environment.NewLine;
-            var contents = File.ReadAllLines(_configfilePath + "Config.xml");
+            var contents = File.ReadAllLines(Configuration.ConfigFilePath + "Config.xml");
 
             foreach( var line in contents)
             {
@@ -306,9 +253,8 @@ namespace Cheat
 
             textBox.Text += Environment.NewLine + "----------------------------------" + Environment.NewLine;
 
-        //    textBox.Text += "Data Directory:" + Environment.NewLine;
-        //    textBox.Text += "   " + _FilesLocation;
         }
+        
         private void ShowTags(TextBox textBox)
         {
             textBox.Clear();
@@ -323,6 +269,7 @@ namespace Cheat
             textBox.Clear();
             textBox.Text = Environment.NewLine + $" Version :{Application.ProductVersion}";
         }
+
         private void ShowListTags(TextBox textBox, TextBox input)
         {
             // Grab the paramater
@@ -350,8 +297,8 @@ namespace Cheat
             if (input.Text.Length >= 6)
             {
                 var param = input.Text.ToLower().Substring(6).Trim();
-                Process.Start(_editor, $"{_FilesLocation}\\{param}");
-                Console.WriteLine($"{_FilesLocation}\\{param}");
+                Process.Start(Configuration.Editor, $"{Configuration.FilesLocation}\\{param}");
+                Console.WriteLine($"{Configuration.FilesLocation}\\{param}");
             }
         }
 
@@ -421,10 +368,10 @@ namespace Cheat
 
                 //var tag = _locales[textBox1.Text.TrimStart()];
                 var appender = string.Empty;
-                if (File.Exists(_FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
+                if (File.Exists(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
                 {
                     textBox2.Clear();
-                    var contents = File.ReadAllLines(_FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}");
+                    var contents = File.ReadAllLines(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}");
 
                     var tags = ExtractTags(contents);
                     
@@ -497,9 +444,7 @@ namespace Cheat
                 }
             }
 
-
             return retVal;
-
         }
 
 
@@ -516,18 +461,15 @@ namespace Cheat
         {
             _mouseDown = true;
             _lastLocation = e.Location;
-
         }
 
         private void textBox1_MouseUp(object sender, MouseEventArgs e)
         {
             _mouseDown = false;
-
         }
 
         private void textBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            
             if (_mouseDown)
             {
                 this.Location = new Point(
