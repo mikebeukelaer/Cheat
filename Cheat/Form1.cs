@@ -149,7 +149,7 @@ namespace Cheat
             var contents = File.ReadAllLines(fileName);
             var pname = Path.GetFileName(fileName);
             var fName =  pathName == rootDir ? Path.GetFileName(fileName) : $"{pathName}/{Path.GetFileName(fileName)}";
-            var tags = ExtractTags(contents);
+            var tags = ExtractTagsII(contents);
 
             if(tags != null)
             {
@@ -373,12 +373,16 @@ namespace Cheat
                     textBox2.Clear();
                     var contents = File.ReadAllLines(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}");
 
-                    var tags = ExtractTags(contents);
-                    
-                    if(tags != null)
-                    {
-                        var index = SkipBlank(contents);
 
+                    var autoCopyFlag = GetAutoCopyFlag(contents);
+
+                    //var tags = ExtractTags(contents);
+                    var index = SkipConfig(contents);
+
+
+                    if (index > 0 && index <= contents.Length-1)
+                    {
+                        
                         for (int i=index; i<contents.Length; i++)
                         {
                              textBox2.Text += contents[i] + Environment.NewLine;
@@ -391,24 +395,151 @@ namespace Cheat
                             textBox2.Text += c + Environment.NewLine;
                         }
                     }
+
+                    if (autoCopyFlag)
+                    {
+                        Clipboard.SetText(textBox2.Text);
+                    }
                     
-                    Clipboard.SetText(textBox2.Text);
                     
                 }
             }
         }
 
-        public int SkipBlank(string[] contents)
+        public bool GetAutoCopyFlag(string[] contents)
         {
-            var index = 3;
+            var retVal = true;
+            var startIndex = SkipUntil(contents, "---", 0);
+            var endIndex = SkipUntil(contents, "---", startIndex+1);
 
-            while(contents[index] == string.Empty )
+            if(endIndex > startIndex)
             {
-                index++;
+                var tagValue = FindTagValue(contents, "autocopy", startIndex, endIndex);
+                return tagValue.Trim().ToLower() == "true" || tagValue == string.Empty ? true : false;
             }
 
-            return index;
+            return true;
+
         }
+
+        public string FindTagValue(string[] contents, string valueToFind, int startIndex, int endIndex)
+        {
+            var retVal = string.Empty;
+
+            var index = startIndex + 1;
+            while(index< endIndex)
+            {
+                Console.WriteLine(contents[index].Substring(0, valueToFind.Length));
+                if(contents[index].Substring(0,valueToFind.Length).ToLower() == valueToFind)
+                {
+                    return contents[index].Substring(valueToFind.Length+1);
+                }
+                index++;
+            }
+            return retVal;
+        }
+
+        public int SkipConfig(string[] contents)
+        {
+            var index = 0;
+            if (contents.Length > 0)
+            {
+                index = SkipBlank(contents, 0);
+                if(contents[index] == "---")
+                {
+                    index = SkipUntil(contents, "---", index+1);
+                }
+            }
+
+            return index == contents.Length ? 0 : index+1;
+
+        }
+
+        public int SkipUntil(string[] contents, string findthis, int startingAtIndex)
+        {
+            while (contents[startingAtIndex] != findthis)
+            {
+                startingAtIndex++;
+            }
+
+            return startingAtIndex;
+        }
+
+        public int SkipBlank(string[] contents, int startingAtIndex)
+        {
+            while(contents[startingAtIndex] == string.Empty )
+            {
+                startingAtIndex++;
+            }
+
+            return startingAtIndex;
+        }
+
+        private List<string> ExtractTagsII(string[] fileContents)
+        {
+            List<string> retVal = null;
+            // 1st three lines of any file can possibly contain tag metadata
+            // 
+            // Read one line at a time
+            // --- <newline>
+            // Tags {tag1, tag2} <newline>
+            // --- <newline>
+            //
+
+
+            var startIndex = SkipUntil(fileContents, "---", 0);
+            var endIndex = SkipUntil(fileContents, "---", startIndex + 1);
+
+            if (endIndex > startIndex)
+            {
+                var tagValue = FindTagValue(fileContents, "tags", startIndex, endIndex);
+
+                var leftBracket = tagValue.IndexOf('[');
+                var rightBracket = tagValue.IndexOf(']');
+
+                var x = tagValue.Substring(leftBracket + 1, rightBracket - leftBracket - 1);
+
+                var list = tagValue.Substring(leftBracket+1,rightBracket-leftBracket-1).Split(',');
+                retVal = list.ToList<string>();
+
+            }
+
+
+            return retVal;
+
+
+
+
+            //if (fileContents.Length > 0)
+            //{
+            //    if (fileContents[0] == "---" && fileContents[2] == "---")
+            //    {
+            //        var space = fileContents[1].IndexOf(' ');
+            //        if (space > 0)
+            //        {
+            //            if (fileContents[1].Substring(0, space).ToLower() == "tags:")
+            //            {
+
+            //                var tmp = fileContents[1].Substring(space, fileContents[1].Length - space);
+            //                var leftBracket = tmp.IndexOf('[');
+
+            //                var taglist = fileContents[1].Substring(leftBracket + space + 1, fileContents[1].Length - leftBracket - 2 - space);
+
+            //                var list = taglist.Split(',');
+            //                retVal = list.ToList<string>();
+
+
+            //            }
+            //        }
+            //    }
+            //}
+
+            //return retVal;
+        }
+
+        
+
+    
 
         private List<string> ExtractTags(string[] fileContents)
         {

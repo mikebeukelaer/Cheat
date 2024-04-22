@@ -1,5 +1,6 @@
 ---
 Tags: [git]
+autocopy: false
 ---
 - List Remote Branches
 	git branch -r

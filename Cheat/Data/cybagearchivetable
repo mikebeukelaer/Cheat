@@ -1,0 +1,47 @@
+---
+Tags: [sql,cybage,backup,add]
+autocopy: false
+---
+Describes the steps to take when adding a new column to a 
+sql table that is part of the Cybage archive routines
+
+For the source table i.e. [dbo].[tblEmptyStickerVerification]
+-------------------------------------------------------------
+1. Modify the existing table (not the table used as the source for the backup)
+   to have the new column(s) needed. By convention, make them nullable
+   unless all rows can be prepopulate with appropriate data.
+2. Script the existing table to a new table with the suffix '_new'
+   - Constraints are system wide so any constraints will need to 
+     be renamed as well
+3. Copy the data from the original i.e. <source table> into the 
+   newly created table from step 1. above.
+
+For the destination, 'backup', table i.e. [dbo].[tblEmptyStickerVerificationBackupClearStore]
+---------------------------------------------------------------------------------------------
+1. Modify the existing table (not the table used as the source for the backup)
+   to have the new column(s) needed. By convention, make them nullable
+   unless all rows can be prepopulate with appropriate data.
+2. Script the existing table to a new table with the suffix '_new'
+   - Constraints are system wide so any constraints will need to 
+     be renamed as well
+3. Copy the data from the original i.e. <source table> into the 
+   newly created table from step 1. above.
+
+
+
+
+
+
+
+4. Rename the <source table> with the suffix '_old'. Use the 
+   built in stored procedure 'spRename'
+   - Will have to the same for any constraints as well
+5. Rename the newly created table by removing the 'new' suffix.
+   - Do the same for the constraints is necessary
+6. Modify the existing table (not the table used as the source for the backup)
+   to have the new column(s) needed. By convention, make them nullable
+   unless all rows can be prepopulate with appropriate data.
+x. Modify the CYB_xxxx stored procedures
+
+
+

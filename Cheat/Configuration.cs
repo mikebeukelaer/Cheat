@@ -12,6 +12,7 @@ namespace Cheat
         public static string ConfigFilePath;
         public static string FilesLocation;
         public static bool IncludeSubDirectories;
+        public static bool AutoCopyToClipboard;
         public static string Editor;
         public static Color BackColor;
         public static Color ForeColor;
@@ -37,7 +38,14 @@ namespace Cheat
                     }
 
                     IncludeSubDirectories =
-                        configfile.DocumentElement.SelectSingleNode("includeSubDir").InnerText.ToLower() == "true" ? true : false; ;
+                        configfile.DocumentElement.SelectSingleNode("includeSubDir").InnerText.ToLower() == "true" ? true : false;
+
+                    AutoCopyToClipboard =
+                             configfile.DocumentElement.SelectSingleNode("autocopytoclipboard")?.InnerText == null ?
+                                 true : 
+                                 configfile.DocumentElement.SelectSingleNode("autocopytoclipboard")?.InnerText.ToLower() == "true" ? 
+                                     true : 
+                                     false;
 
                     Editor = configfile.DocumentElement.SelectSingleNode("editor")?.InnerText == null ?
                         "notepad.exe" :
