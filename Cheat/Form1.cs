@@ -243,6 +243,14 @@ namespace Cheat
             if (input.Text.Length >= 7)
             {
                 var param = input.Text.ToLower().Substring(7).Trim();
+
+                if(param.Length < 3)
+                {
+                    textBox.Clear();
+                    textBox.Text = "Search requires phrases at least 3 chars in length";
+                    return;
+                }
+
                 textBox.Clear();
                 foreach(var cheat in _fileNames)
                 {
