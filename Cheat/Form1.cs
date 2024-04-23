@@ -465,7 +465,12 @@ namespace Cheat
 
                     if (autoCopyFlag)
                     {
+                        lblCopyIndicator.Text = "c";
                         Clipboard.SetText(textBox2.Text);
+                    }
+                    else
+                    {
+                        lblCopyIndicator.Text = "";
                     }
                     
                     

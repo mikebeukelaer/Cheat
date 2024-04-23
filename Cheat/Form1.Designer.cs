@@ -31,6 +31,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.lblCopyIndicator = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,7 +44,7 @@
             this.textBox1.Location = new System.Drawing.Point(49, 11);
             this.textBox1.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(667, 22);
+            this.textBox1.Size = new System.Drawing.Size(642, 22);
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "Start Typing...";
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
@@ -79,12 +80,24 @@
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             // 
+            // lblCopyIndicator
+            // 
+            this.lblCopyIndicator.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblCopyIndicator.AutoSize = true;
+            this.lblCopyIndicator.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCopyIndicator.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.lblCopyIndicator.Location = new System.Drawing.Point(705, 11);
+            this.lblCopyIndicator.Name = "lblCopyIndicator";
+            this.lblCopyIndicator.Size = new System.Drawing.Size(0, 21);
+            this.lblCopyIndicator.TabIndex = 3;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.ClientSize = new System.Drawing.Size(730, 371);
+            this.Controls.Add(this.lblCopyIndicator);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
@@ -110,6 +123,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label lblCopyIndicator;
     }
 }
 
