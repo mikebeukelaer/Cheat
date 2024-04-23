@@ -408,7 +408,6 @@ namespace Cheat
 
         public bool GetAutoCopyFlag(string[] contents)
         {
-            var retVal = true;
             var startIndex = SkipUntil(contents, "---", 0);
             var endIndex = SkipUntil(contents, "---", startIndex+1);
 
@@ -483,6 +482,7 @@ namespace Cheat
             // Read one line at a time
             // --- <newline>
             // Tags {tag1, tag2} <newline>
+            // autocopy : true | false
             // --- <newline>
             //
 
@@ -504,37 +504,8 @@ namespace Cheat
 
             }
 
-
             return retVal;
 
-
-
-
-            //if (fileContents.Length > 0)
-            //{
-            //    if (fileContents[0] == "---" && fileContents[2] == "---")
-            //    {
-            //        var space = fileContents[1].IndexOf(' ');
-            //        if (space > 0)
-            //        {
-            //            if (fileContents[1].Substring(0, space).ToLower() == "tags:")
-            //            {
-
-            //                var tmp = fileContents[1].Substring(space, fileContents[1].Length - space);
-            //                var leftBracket = tmp.IndexOf('[');
-
-            //                var taglist = fileContents[1].Substring(leftBracket + space + 1, fileContents[1].Length - leftBracket - 2 - space);
-
-            //                var list = taglist.Split(',');
-            //                retVal = list.ToList<string>();
-
-
-            //            }
-            //        }
-            //    }
-            //}
-
-            //return retVal;
         }
 
         
