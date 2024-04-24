@@ -475,7 +475,6 @@ namespace Cheat
                     }
                     else
                     {
-                        
                         picCopy.Visible = false;
                     }
                     
