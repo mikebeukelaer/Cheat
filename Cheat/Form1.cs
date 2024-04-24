@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Cheat
@@ -21,6 +22,7 @@ namespace Cheat
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.None;
+            picCopy.Visible = false;
         }
 
 
@@ -449,11 +451,14 @@ namespace Cheat
 
                     if (index > 0 && index <= contents.Length-1)
                     {
-                        
+                        StringBuilder sb = new StringBuilder();
                         for (int i=index; i<contents.Length; i++)
                         {
-                             textBox2.Text += contents[i] + Environment.NewLine;
+                            sb.Append(contents[i]);
+                            sb.Append(Environment.NewLine);
+                             //textBox2.Text += contents[i] + Environment.NewLine;
                         }
+                        textBox2.Text = sb.ToString();
                     }
                     else
                     {
@@ -465,12 +470,13 @@ namespace Cheat
 
                     if (autoCopyFlag)
                     {
-                        lblCopyIndicator.Text = "c";
+                        picCopy.Visible = true;
                         Clipboard.SetText(textBox2.Text);
                     }
                     else
                     {
-                        lblCopyIndicator.Text = "";
+                        
+                        picCopy.Visible = false;
                     }
                     
                     

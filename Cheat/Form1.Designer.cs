@@ -30,9 +30,11 @@
         {
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lblCopyIndicator = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.picCopy = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picCopy)).BeginInit();
             this.SuspendLayout();
             // 
             // textBox1
@@ -71,15 +73,6 @@
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::Cheat.Properties.Resources.mag;
-            this.pictureBox1.Location = new System.Drawing.Point(14, 11);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(26, 29);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            // 
             // lblCopyIndicator
             // 
             this.lblCopyIndicator.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -91,12 +84,33 @@
             this.lblCopyIndicator.Size = new System.Drawing.Size(0, 21);
             this.lblCopyIndicator.TabIndex = 3;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::Cheat.Properties.Resources.mag;
+            this.pictureBox1.Location = new System.Drawing.Point(14, 11);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(26, 29);
+            this.pictureBox1.TabIndex = 2;
+            this.pictureBox1.TabStop = false;
+            // 
+            // picCopy
+            // 
+            this.picCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.picCopy.Image = global::Cheat.Properties.Resources.copyto;
+            this.picCopy.Location = new System.Drawing.Point(698, 8);
+            this.picCopy.Name = "picCopy";
+            this.picCopy.Size = new System.Drawing.Size(24, 24);
+            this.picCopy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picCopy.TabIndex = 4;
+            this.picCopy.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.ClientSize = new System.Drawing.Size(730, 371);
+            this.Controls.Add(this.picCopy);
             this.Controls.Add(this.lblCopyIndicator);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.textBox2);
@@ -113,6 +127,7 @@
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picCopy)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -124,6 +139,7 @@
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label lblCopyIndicator;
+        private System.Windows.Forms.PictureBox picCopy;
     }
 }
 
