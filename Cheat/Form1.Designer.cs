@@ -31,10 +31,10 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.lblCopyIndicator = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.picCopy = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.picCopy)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // textBox1
@@ -84,6 +84,17 @@
             this.lblCopyIndicator.Size = new System.Drawing.Size(0, 21);
             this.lblCopyIndicator.TabIndex = 3;
             // 
+            // picCopy
+            // 
+            this.picCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.picCopy.Image = global::Cheat.Properties.Resources.copyto_greyscale;
+            this.picCopy.Location = new System.Drawing.Point(698, 8);
+            this.picCopy.Name = "picCopy";
+            this.picCopy.Size = new System.Drawing.Size(24, 24);
+            this.picCopy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picCopy.TabIndex = 4;
+            this.picCopy.TabStop = false;
+            // 
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Cheat.Properties.Resources.mag;
@@ -92,17 +103,6 @@
             this.pictureBox1.Size = new System.Drawing.Size(26, 29);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
-            // 
-            // picCopy
-            // 
-            this.picCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.picCopy.Image = global::Cheat.Properties.Resources.copyto;
-            this.picCopy.Location = new System.Drawing.Point(698, 8);
-            this.picCopy.Name = "picCopy";
-            this.picCopy.Size = new System.Drawing.Size(24, 24);
-            this.picCopy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picCopy.TabIndex = 4;
-            this.picCopy.TabStop = false;
             // 
             // Form1
             // 
@@ -126,8 +126,8 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picCopy)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

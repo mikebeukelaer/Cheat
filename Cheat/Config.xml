@@ -6,4 +6,5 @@
   <backcolor>32,32,32</backcolor>
   <forecolor>255,255,255</forecolor>
   <autocopytoclipboard>true</autocopytoclipboard>
+  <mainfontsize>10</mainfontsize>
 </config>

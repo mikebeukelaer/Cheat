@@ -103,6 +103,7 @@
     <Content Include="Config.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\copyto_greyscale.png" />
     <None Include="Resources\copyto.png" />
   </ItemGroup>
   <ItemGroup>

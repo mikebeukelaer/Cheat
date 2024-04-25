@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Cheat
 {
@@ -23,6 +24,7 @@ namespace Cheat
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.None;
             picCopy.Visible = false;
+            
         }
 
 
@@ -131,6 +133,9 @@ namespace Cheat
                 textBox1.ForeColor = Configuration.ForeColor;
                 textBox2.ForeColor = Configuration.ForeColor;
                 textBox2.BackColor = Configuration.BackColor;
+
+                var tmpFont = new Font(textBox2.Font.Name,Configuration.FontSizePt);
+                textBox2.Font = tmpFont;
 
                 var files = Directory.GetFiles(Configuration.FilesLocation);
 
@@ -533,7 +538,7 @@ namespace Cheat
 
         public int SkipUntil(string[] contents, string findthis, int startingAtIndex)
         {
-            while (contents[startingAtIndex] != findthis)
+            while (startingAtIndex <  contents.Length  && contents[startingAtIndex] != findthis)
             {
                 startingAtIndex++;
             }

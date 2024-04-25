@@ -16,6 +16,7 @@ namespace Cheat
         public static string Editor;
         public static Color BackColor;
         public static Color ForeColor;
+        public static int FontSizePt = 10;
 
         static Configuration()
         {
@@ -63,6 +64,12 @@ namespace Cheat
                     tmp = forecolor.Split(',');
                     var foreColor = Color.FromArgb(int.Parse(tmp[0]), int.Parse(tmp[1]), int.Parse(tmp[2]));
                     ForeColor = foreColor;
+
+                    FontSizePt = int.TryParse(configfile.DocumentElement.SelectSingleNode("mainfontsize")?.InnerText, out FontSizePt) ?
+                        FontSizePt : 
+                        14;
+
+
                 }
                 else
                 {
