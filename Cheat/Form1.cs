@@ -283,22 +283,45 @@ namespace Cheat
         private void ShowHelp (TextBox textBox)
         {
             textBox.Clear();
-            textBox.Text += "--help" + Environment.NewLine;
-            textBox.Text += "   Shows this help information" + Environment.NewLine;
-            textBox.Text += "--list" + Environment.NewLine;
-            textBox.Text += "   Lists all cheats" + Environment.NewLine;
-            textBox.Text += "--config" + Environment.NewLine;
-            textBox.Text += "   Shows configuration locations" + Environment.NewLine;
-            textBox.Text += "--tags" + Environment.NewLine;
-            textBox.Text += "   Lists all known tags" + Environment.NewLine;
-            textBox.Text += "--listcheats <tag>" + Environment.NewLine;
-            textBox.Text += "   Lists all cheats for the given <tag>" + Environment.NewLine;
-            textBox.Text += "--edit <cheat>" + Environment.NewLine;
-            textBox.Text += "   Opens the cheat in the configured editor <tag>" + Environment.NewLine;
-            textBox.Text += "--find <text>" + Environment.NewLine;
-            textBox.Text += "   Lists all cheats containing <text>" + Environment.NewLine;
-            textBox.Text += "--version" + Environment.NewLine;
-            textBox.Text += "   Shows version info" + Environment.NewLine;
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("--help");
+            sb.Append(Environment.NewLine);
+            sb.Append("   Shows this help information");
+            sb.Append(Environment.NewLine);
+            sb.Append("--list");
+            sb.Append(Environment.NewLine);
+            sb.Append("   Lists all cheats");
+            sb.Append(Environment.NewLine);
+            sb.Append("--config");
+            sb.Append(Environment.NewLine);
+            sb.Append("   Shows configuration locations"); sb.Append(Environment.NewLine);
+            sb.Append("--tags");
+            sb.Append(Environment.NewLine);
+            sb.Append("   Lists all known tags");
+            sb.Append(Environment.NewLine);
+            sb.Append("--listcheats <tag>");
+            sb.Append(Environment.NewLine);
+            sb.Append("   Lists all cheats for the given <tag>");
+            sb.Append(Environment.NewLine);
+            sb.Append("--edit <cheat>");
+            sb.Append(Environment.NewLine);
+            sb.Append("   Opens the <cheat> file in the configured editor");
+            sb.Append(Environment.NewLine);
+            sb.Append("--editconfig");
+            sb.Append(Environment.NewLine);
+            sb.Append("   Opens the configuration file in the configured editor");
+            sb.Append(Environment.NewLine);
+            sb.Append("--find <text>"); 
+            sb.Append(Environment.NewLine);
+            sb.Append("   Lists all cheats containing <text>");
+            sb.Append(Environment.NewLine);
+            sb.Append("--version");
+            sb.Append(Environment.NewLine);
+            sb.Append("   Shows version info");
+            sb.Append(Environment.NewLine);
+
+            textBox.Text = sb.ToString();
 
         }
 
@@ -328,7 +351,14 @@ namespace Cheat
             textBox.Text += Environment.NewLine + "----------------------------------" + Environment.NewLine;
 
         }
-        
+
+        private void EditConfig(TextBox textBox)
+        {
+            Process.Start(Configuration.Editor, $"{Configuration.ConfigFilePath}\\Config.xml");
+            textBox.Clear();
+
+        }
+
         private void ShowTags(TextBox textBox)
         {
             textBox.Clear();
@@ -410,6 +440,11 @@ namespace Cheat
                     ShowConfig(textBox2);
                     return;
                 }
+                if (textBox1.Text.ToLower().TrimStart() == "--editconfig")
+                {
+                    EditConfig(textBox2);
+                    return;
+                }
 
                 if (textBox1.Text.ToLower().TrimStart() == "--tags")
                 {
@@ -440,19 +475,16 @@ namespace Cheat
                     return;
                 }
 
-                //var tag = _locales[textBox1.Text.TrimStart()];
+                
                 var appender = string.Empty;
                 if (File.Exists(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
                 {
                     textBox2.Clear();
                     var contents = File.ReadAllLines(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}");
 
-
                     var autoCopyFlag = GetAutoCopyFlag(contents);
 
-                    //var tags = ExtractTags(contents);
                     var index = SkipConfig(contents);
-
 
                     if (index > 0 && index <= contents.Length-1)
                     {
@@ -461,16 +493,18 @@ namespace Cheat
                         {
                             sb.Append(contents[i]);
                             sb.Append(Environment.NewLine);
-                             //textBox2.Text += contents[i] + Environment.NewLine;
                         }
                         textBox2.Text = sb.ToString();
                     }
                     else
                     {
+                        StringBuilder sb = new StringBuilder();
                         foreach (var c in contents)
                         {
-                            textBox2.Text += c + Environment.NewLine;
+                            sb.Append(c);
+                            sb.Append(Environment.NewLine);
                         }
+                        textBox2.Text = sb.ToString();
                     }
 
                     if (autoCopyFlag)

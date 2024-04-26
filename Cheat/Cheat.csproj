@@ -122,7 +122,6 @@
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (
 copy $(TargetDir)*.exe c:\utils\cheat\
-copy  $(TargetDir)*.exe c:\utils\cheat\
 )</PostBuildEvent>
   </PropertyGroup>
 </Project>
