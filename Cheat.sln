@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.33919.361
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cheat", "Cheat\Cheat.csproj", "{4E1CEDC7-F231-4026-86CA-41714D23E72F}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{2CF0B297-3F1A-4120-BFB6-8120E491F002}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,9 @@ Global
 		{4E1CEDC7-F231-4026-86CA-41714D23E72F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E1CEDC7-F231-4026-86CA-41714D23E72F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E1CEDC7-F231-4026-86CA-41714D23E72F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CF0B297-3F1A-4120-BFB6-8120E491F002}.Debug|Any CPU.ActiveCfg = Debug
+		{2CF0B297-3F1A-4120-BFB6-8120E491F002}.Release|Any CPU.ActiveCfg = Release
+		{2CF0B297-3F1A-4120-BFB6-8120E491F002}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
