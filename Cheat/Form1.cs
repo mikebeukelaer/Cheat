@@ -610,6 +610,8 @@ namespace Cheat
             {
                 var tagValue = FindTagValue(fileContents, "tags", startIndex, endIndex);
 
+                if(tagValue == string.Empty) { return retVal; }
+
                 var leftBracket = tagValue.IndexOf('[');
                 var rightBracket = tagValue.IndexOf(']');
 
