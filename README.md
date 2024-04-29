@@ -1,6 +1,8 @@
 # Cheat
 My windows GUI version the command line util known as Cheat
 
+This will use the Cascadia mono font, which can be found [here](https://github.com/microsoft/cascadia-code)
+
 Addtional Cheats can be found here [here](https://github.com/cheat/cheatsheets)
 
 To get started use the --help command

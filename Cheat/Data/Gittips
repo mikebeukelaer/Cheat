@@ -13,3 +13,8 @@ autocopy: false
 	
 - Config (Global) Settings
 	git config --global -l
+
+- Overwrite my local changes with what is on the server
+	git fetch
+	git reset --hard HEAD
+	git merge '@{u}'
