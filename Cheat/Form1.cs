@@ -238,6 +238,7 @@ namespace Cheat
         {
             if(textBox1.Text == string.Empty && !_initalState)
             {
+                Console.WriteLine("Text changed");
                 textBox1.Text = "Start typing...";
                 _initalState = true;
             }
@@ -408,14 +409,25 @@ namespace Cheat
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Escape)
+            if (e.KeyCode == Keys.Escape && textBox1.Text.Trim() != string.Empty)
+            {
+                if(_initalState) { this.Close(); }
+
+                textBox1.Text = "";
+                _initalState = true;
+                return;
+
+            }
+            if (e.KeyCode == Keys.Escape)
             {
                 this.Close();
             }
 
+
             if (_initalState)
             {
                 textBox1.Text = "";
+                Console.WriteLine("key down .. about to set _initialstate");
                 _initalState = false;
             }
             
