@@ -14,11 +14,15 @@ namespace Cheat
     {
         private bool _mouseDown;
         private Point _lastLocation;
+        // Used to indicate the "Start Typing..." is on display
+        //
         private bool _initalState = true;
       
         private string[] _fileNames;
         private Dictionary<string,List<string>> _tags = new Dictionary<string, List<string>>();
 
+        private List<string> _findList = new List<string>();
+        private int _findListIndex = -1;
         public Form1()
         {
             InitializeComponent();
@@ -234,15 +238,7 @@ namespace Cheat
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            if(textBox1.Text == string.Empty && !_initalState)
-            {
-                Console.WriteLine("Text changed");
-                textBox1.Text = "Start typing...";
-                _initalState = true;
-            }
-        }
+
         
         private void ShowSearch(TextBox textBox, TextBox input)
         {
@@ -270,6 +266,7 @@ namespace Cheat
                         if (line.ToLower().Contains(param))
                         {
                             textBox.Text += cheat + Environment.NewLine;
+                            _findList.Add(cheat);
                             break;
                         }
                     }
@@ -407,8 +404,68 @@ namespace Cheat
             }
         }
 
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine($"in the text changed event .. text is {textBox1.Text}");
+            if (textBox1.Text == string.Empty && !_initalState)
+            {
+                Console.WriteLine("Text changed");
+                textBox1.Text = "Start typing...";
+                _initalState = true;
+            }
+        }
+
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Down)
+            {
+                if (_findList.Count > 0)
+                {
+                    _findListIndex++;
+                    if (_findListIndex < 0)
+                    {
+                        _findListIndex = _findList.Count;
+                    }
+                    if(_findListIndex >= _findList.Count)
+                    {
+                        _findListIndex = 0;
+                    }
+                    textBox1.Text = _findList[_findListIndex];
+
+                    textBox1.SelectAll();
+
+                    
+                    e.SuppressKeyPress = true;
+                }
+            }
+            else if (e.KeyCode == Keys.Up)
+            {
+                if (_findList.Count > 0)
+                {
+                    _findListIndex--;
+
+                    if (_findListIndex < 0)
+                    {
+                        _findListIndex = _findList.Count-1;
+                    }
+                    if (_findListIndex >= _findList.Count)
+                    {
+                        _findListIndex = 0;
+                    }
+                    textBox1.Text = _findList[_findListIndex];
+
+                    textBox1.SelectAll();
+
+                    
+                    e.SuppressKeyPress = true;
+                }
+            }
+            else
+            {
+                _findList = new List<string>();
+                _findListIndex = -1;
+            }
+
             if (e.KeyCode == Keys.Escape && textBox1.Text.Trim() != string.Empty)
             {
                 if(_initalState) { this.Close(); }
@@ -426,6 +483,9 @@ namespace Cheat
 
             if (_initalState)
             {
+                // Clear the text of the "Start typing and then continue"
+                //
+                Console.WriteLine("key down .. clearing the text");
                 textBox1.Text = "";
                 Console.WriteLine("key down .. about to set _initialstate");
                 _initalState = false;
