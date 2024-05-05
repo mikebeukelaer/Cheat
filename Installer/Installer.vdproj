@@ -154,7 +154,7 @@
         {
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_4176D98AC7634A388C1F1D09B068861C"
             {
-            "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
+            "DefaultLocation" = "8:[ProgramFiles64Folder][Manufacturer]\\[ProductName]"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
@@ -162,6 +162,17 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_22B33B16E8704A18BCB897B61121C47B"
+                    {
+                    "Name" = "8:Data"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_21C27E4BC63F4DD381CCB632CB770464"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
             "{1525181F-901A-416C-8A58-119130FE478E}:_D5BA6B7FFF7246E794845EB73F378756"
@@ -201,9 +212,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Installer"
+        "ProductName" = "8:Cheat"
         "ProductCode" = "8:{F95A0367-1AE3-4E10-8235-B2642C8E885B}"
-        "PackageCode" = "8:{D4284B37-DD15-474B-8784-BAA6CA0A3479}"
+        "PackageCode" = "8:{43F5DE89-A50E-4A64-B992-D3D002BBE68E}"
         "UpgradeCode" = "8:{9FC4C03A-999A-4723-851F-8EAF0F5E443A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -211,10 +222,10 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:mike.beukelaer@gmail.com"
+        "Manufacturer" = "8:BUtils"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Installer"
+        "Title" = "8:Cheat"
         "Subject" = "8:"
         "ARPCONTACT" = "8:mike.beukelaer@gmail.com"
         "Keywords" = "8:"
@@ -224,7 +235,7 @@
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
-        "TargetPlatform" = "3:0"
+        "TargetPlatform" = "3:1"
         "PreBuildEvent" = "8:"
         "PostBuildEvent" = "8:"
         "RunPostBuildEvent" = "3:0"
@@ -323,6 +334,20 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_3E31BE3F53C045328F992832D4758975"
+            {
+            "Name" = "8:Cheat"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_EAA25CA88529494DA012B7C52188B225"
+            "Folder" = "8:_EF8E08AF0C0B40B49EC351BB8F0D3623"
+            "WorkingFolder" = "8:_4176D98AC7634A388C1F1D09B068861C"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {
@@ -752,7 +777,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EAA25CA88529494DA012B7C52188B225"
             {
-            "SourcePath" = "8:..\\Cheat\\obj\\Release\\Cheat.exe"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_4176D98AC7634A388C1F1D09B068861C"

@@ -94,6 +94,9 @@ namespace Cheat
 
             try
             {
+
+                if(!Directory.Exists(sDir)) { return; }
+
                 foreach (string f in Directory.GetFiles(sDir))
                 {
                     var dirName = rootDir == Path.GetFileName(sDir) ? string.Empty : Path.GetFileName(sDir);
@@ -434,9 +437,9 @@ namespace Cheat
 
                     textBox1.SelectAll();
 
-                    
                     e.SuppressKeyPress = true;
                 }
+                return;
             }
             else if (e.KeyCode == Keys.Up)
             {
@@ -459,6 +462,7 @@ namespace Cheat
                     
                     e.SuppressKeyPress = true;
                 }
+                return;
             }
             else
             {
@@ -474,6 +478,10 @@ namespace Cheat
                 _initalState = true;
                 return;
 
+            }
+            if(e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
+            {
+                return;
             }
             if (e.KeyCode == Keys.Escape)
             {
