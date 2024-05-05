@@ -165,7 +165,7 @@
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_22B33B16E8704A18BCB897B61121C47B"
                     {
                     "Name" = "8:Data"
-                    "AlwaysCreate" = "11:FALSE"
+                    "AlwaysCreate" = "11:TRUE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
                     "Property" = "8:_21C27E4BC63F4DD381CCB632CB770464"
@@ -214,7 +214,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Cheat"
         "ProductCode" = "8:{F95A0367-1AE3-4E10-8235-B2642C8E885B}"
-        "PackageCode" = "8:{43F5DE89-A50E-4A64-B992-D3D002BBE68E}"
+        "PackageCode" = "8:{C18EB976-78B8-4CB4-92C9-8FA1F38D31EB}"
         "UpgradeCode" = "8:{9FC4C03A-999A-4723-851F-8EAF0F5E443A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -777,7 +777,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EAA25CA88529494DA012B7C52188B225"
             {
-            "SourcePath" = "8:"
+            "SourcePath" = "8:..\\Cheat\\obj\\Release\\Cheat.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_4176D98AC7634A388C1F1D09B068861C"

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
 using System.Xml;
 
 namespace Cheat
@@ -27,6 +28,7 @@ namespace Cheat
 
                 if (File.Exists($"{ConfigFilePath}Config.xml"))
                 {
+                    
                     configfile.Load(ConfigFilePath + "Config.xml");
 
                     var _FilesLocation = configfile.DocumentElement.SelectSingleNode("cheatsfolder")?.InnerText;
@@ -67,7 +69,6 @@ namespace Cheat
                     FontSizePt = int.TryParse(configfile.DocumentElement.SelectSingleNode("mainfontsize")?.InnerText, out FontSizePt) ?
                         FontSizePt : 
                         14;
-
 
                 }
                 else

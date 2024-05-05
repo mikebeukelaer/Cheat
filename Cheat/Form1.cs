@@ -94,7 +94,6 @@ namespace Cheat
 
             try
             {
-
                 if(!Directory.Exists(sDir)) { return; }
 
                 foreach (string f in Directory.GetFiles(sDir))
@@ -133,6 +132,7 @@ namespace Cheat
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            var statusMessage = string.Empty;
             try
             {
                 this.BackColor = Configuration.BackColor;
@@ -143,10 +143,11 @@ namespace Cheat
 
                 var tmpFont = new Font(textBox2.Font.Name,Configuration.FontSizePt);
                 textBox2.Font = tmpFont;
-
+                statusMessage = $"reading filesLocaton : {Configuration.FilesLocation}";
                 var files = Directory.GetFiles(Configuration.FilesLocation);
 
                 var tmplist = new List<string>();
+                statusMessage = "Loading files";
                 DirSearch(Configuration.FilesLocation, Path.GetFileName(Configuration.FilesLocation), tmplist);
                 _fileNames = tmplist.ToArray();
 
@@ -159,13 +160,13 @@ namespace Cheat
 
                 textBox1.Text = "Start typing...";
                 textBox1.Select(0, 0);
-
+                statusMessage = "Setting location";
                 SetLocation();
 
             }
             catch( Exception ex )
             {
-                MessageBox.Show( ex.InnerException.Message );
+                MessageBox.Show($"Error loading while {statusMessage}");
                 Application.Exit();
             }
            
