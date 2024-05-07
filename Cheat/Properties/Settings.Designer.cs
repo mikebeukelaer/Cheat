@@ -70,5 +70,17 @@ namespace Cheat.Properties {
                 this["Minimised"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowHelp {
+            get {
+                return ((bool)(this["ShowHelp"]));
+            }
+            set {
+                this["ShowHelp"] = value;
+            }
+        }
     }
 }

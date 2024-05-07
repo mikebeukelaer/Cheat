@@ -162,9 +162,15 @@ namespace Cheat
                 textBox1.Select(0, 0);
                 statusMessage = "Setting location";
                 SetLocation();
+                if (Properties.Settings.Default.ShowHelp)
+                {
+                    textBox2.Text = "Try --help to start....";
+                    Properties.Settings.Default.ShowHelp = false;
+                }
+                    
 
             }
-            catch( Exception ex )
+            catch( Exception )
             {
                 MessageBox.Show($"Error loading while {statusMessage}");
                 Application.Exit();
