@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <cheatsfolder>.\Data</cheatsfolder>
+  <includeSubDir>true</includeSubDir>
+  <editor>c:\windows\notepad.exe</editor>
+  <backcolor>32,32,32</backcolor>
+  <forecolor>255,255,255</forecolor>
+  <autocopytoclipboard>true</autocopytoclipboard>
+  <mainfontsize>10</mainfontsize>
+</config>

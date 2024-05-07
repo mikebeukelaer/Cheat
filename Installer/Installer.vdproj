@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_A65B507BB5E64AB1ACB2BCDF8E84F919"
+        "MsmKey" = "8:_9C89DFCACB534345AD8C1207FD016EE9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -126,9 +126,9 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A65B507BB5E64AB1ACB2BCDF8E84F919"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9C89DFCACB534345AD8C1207FD016EE9"
             {
-            "SourcePath" = "8:..\\Cheat\\Config.xml"
+            "SourcePath" = "8:..\\Cheat\\Default Files\\Config.xml"
             "TargetName" = "8:Config.xml"
             "Tag" = "8:"
             "Folder" = "8:_4176D98AC7634A388C1F1D09B068861C"
