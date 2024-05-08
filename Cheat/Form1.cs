@@ -397,6 +397,7 @@ namespace Cheat
                     foreach (var t in _tags[param])
                     {
                         textBox.Text += "  " + t + Environment.NewLine;
+                        _findList.Add(t);
                     }
                 }
             }
