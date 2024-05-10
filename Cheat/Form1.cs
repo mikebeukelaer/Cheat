@@ -22,12 +22,13 @@ namespace Cheat
         private Dictionary<string,List<string>> _tags = new Dictionary<string, List<string>>();
 
         private List<string> _findList = new List<string>();
-        private int _findListIndex = -1;
+        private int _findListIndex = 0;
         public Form1()
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.None;
             picCopy.Visible = false;
+            listBox1.Visible = false;
             
         }
 
@@ -223,7 +224,12 @@ namespace Cheat
             }
             Properties.Settings.Default.Save();
         }
-
+        private void ResizeHeightOfListBox(ListBox listBox)
+        {
+            var computedHeight = (listBox.ItemHeight * listBox.Items.Count) + 4;
+            var newHeight = Math.Min(computedHeight, this.Height - textBox1.Bottom + 2);
+            listBox.Height = newHeight;
+        }
         private void BuildTagList(string fileName, string pathName, string rootDir)
         {
             var contents = File.ReadAllLines(fileName);
@@ -266,6 +272,7 @@ namespace Cheat
                 }
 
                 textBox.Clear();
+                listBox1.Items.Clear();
                 foreach(var cheat in _fileNames)
                 {
                    
@@ -275,15 +282,20 @@ namespace Cheat
                    
                         if (line.ToLower().Contains(param))
                         {
-                            textBox.Text += cheat + Environment.NewLine;
+                          //  textBox.Text += cheat + Environment.NewLine;
                             _findList.Add(cheat);
+                            listBox1.Items.Add(cheat);
                             break;
                         }
                     }
                 }
-
-
-
+                if(_findList.Count > 0)
+                {
+                    listBox1.Visible = true;
+                    listBox1.SelectedIndex = 0;
+                    ResizeHeightOfListBox(listBox1);
+                   // listBox1.Focus();
+                }
             }
         }
         
@@ -338,7 +350,16 @@ namespace Cheat
             textBox.Clear();
             foreach (var f in _fileNames)
             {
-                textBox.Text += f + Environment.NewLine;
+                //   textBox.Text += f + Environment.NewLine;
+                listBox1.Items.Add(f);
+                _findList.Add(f);
+            }
+            if (_findList.Count > 0)
+            {
+                listBox1.Visible = true;
+                listBox1.SelectedIndex = 0;
+                ResizeHeightOfListBox(listBox1);
+                // listBox1.Focus();
             }
 
         }
@@ -393,13 +414,21 @@ namespace Cheat
                 if (_tags.ContainsKey(param))
                 {
                     textBox.Clear();
-                    textBox.Text = $"Cheats with tag: {param}" + Environment.NewLine;
+                   // textBox.Text = $"Cheats with tag: {param}" + Environment.NewLine;
                     foreach (var t in _tags[param])
                     {
-                        textBox.Text += "  " + t + Environment.NewLine;
+                      //  textBox.Text += "  " + t + Environment.NewLine;
                         _findList.Add(t);
+                        listBox1.Items.Add(t);
                     }
                 }
+            }
+            if (_findList.Count > 0)
+            {
+                listBox1.Visible = true;
+                listBox1.SelectedIndex = 0;
+                ResizeHeightOfListBox(listBox1);
+                // listBox1.Focus();
             }
         }
 
@@ -428,6 +457,7 @@ namespace Cheat
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+
             if (e.KeyCode == Keys.Down)
             {
                 if (_findList.Count > 0)
@@ -441,11 +471,13 @@ namespace Cheat
                     {
                         _findListIndex = 0;
                     }
-                    textBox1.Text = _findList[_findListIndex];
+                    listBox1.SelectedIndex = _findListIndex;
+                    listBox1.SelectedItem = _findListIndex;
+                    //textBox1.Text = _findList[_findListIndex];
 
-                    textBox1.SelectAll();
+                    //textBox1.SelectAll();
 
-                    e.SuppressKeyPress = true;
+                    //e.SuppressKeyPress = true;
                 }
                 return;
             }
@@ -463,19 +495,22 @@ namespace Cheat
                     {
                         _findListIndex = 0;
                     }
-                    textBox1.Text = _findList[_findListIndex];
+                    listBox1.SelectedIndex = _findListIndex;
+                    listBox1.SelectedItem = _findListIndex;
+                    //textBox1.Text = _findList[_findListIndex];
 
-                    textBox1.SelectAll();
+                    //textBox1.SelectAll();
 
-                    
-                    e.SuppressKeyPress = true;
+
+                    //e.SuppressKeyPress = true;
                 }
                 return;
             }
             else
             {
                 _findList = new List<string>();
-                _findListIndex = -1;
+                _findListIndex = 0;
+                listBox1.Visible = false;   
             }
 
             if (e.KeyCode == Keys.Escape && textBox1.Text.Trim() != string.Empty)
@@ -484,6 +519,7 @@ namespace Cheat
 
                 textBox1.Text = "";
                 _initalState = true;
+                listBox1.Visible = false;
                 return;
 
             }
@@ -509,6 +545,7 @@ namespace Cheat
             
             if(e.KeyCode== Keys.Enter)
             {
+                listBox1.Visible = false;
 
                 if (textBox1.Text.ToLower().TrimStart() == "--help")
                 {
@@ -831,7 +868,13 @@ namespace Cheat
             this.Refresh();
             textBox2.Width = this.Width - 30;
             textBox2.Height = this.Height - 60;
+            listBox1.Width = this.Width - listBox1.Left - 2;
 
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox1.Text = (string)listBox1.Items[listBox1.SelectedIndex];
         }
     }
 }
