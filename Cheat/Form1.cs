@@ -224,7 +224,12 @@ namespace Cheat
             }
             Properties.Settings.Default.Save();
         }
-
+        private void ResizeHeightOfListBox(ListBox listBox)
+        {
+            var computedHeight = (listBox.ItemHeight * listBox.Items.Count) + 4;
+            var newHeight = Math.Min(computedHeight, this.Height - textBox1.Bottom + 2);
+            listBox.Height = newHeight;
+        }
         private void BuildTagList(string fileName, string pathName, string rootDir)
         {
             var contents = File.ReadAllLines(fileName);
@@ -288,6 +293,7 @@ namespace Cheat
                 {
                     listBox1.Visible = true;
                     listBox1.SelectedIndex = 0;
+                    ResizeHeightOfListBox(listBox1);
                    // listBox1.Focus();
                 }
             }
@@ -352,6 +358,7 @@ namespace Cheat
             {
                 listBox1.Visible = true;
                 listBox1.SelectedIndex = 0;
+                ResizeHeightOfListBox(listBox1);
                 // listBox1.Focus();
             }
 
@@ -420,6 +427,7 @@ namespace Cheat
             {
                 listBox1.Visible = true;
                 listBox1.SelectedIndex = 0;
+                ResizeHeightOfListBox(listBox1);
                 // listBox1.Focus();
             }
         }
@@ -449,24 +457,6 @@ namespace Cheat
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            //if(e.KeyCode== Keys.Down)
-            //{
-            //    if (_findList.Count > 0)
-            //    {
-            //        _findListIndex++;
-            //        if (_findListIndex < 0)
-            //        {
-            //            _findListIndex = _findList.Count;
-            //        }
-            //        if (_findListIndex >= _findList.Count)
-            //        {
-            //            _findListIndex = 0;
-            //        }
-            //        listBox1.SelectedIndex = _findListIndex;
-            //        listBox1.SelectedItem = _findListIndex;
-            //    }
-            //    return;
-            //}
 
             if (e.KeyCode == Keys.Down)
             {
@@ -520,6 +510,7 @@ namespace Cheat
             {
                 _findList = new List<string>();
                 _findListIndex = 0;
+                listBox1.Visible = false;   
             }
 
             if (e.KeyCode == Keys.Escape && textBox1.Text.Trim() != string.Empty)
@@ -528,6 +519,7 @@ namespace Cheat
 
                 textBox1.Text = "";
                 _initalState = true;
+                listBox1.Visible = false;
                 return;
 
             }

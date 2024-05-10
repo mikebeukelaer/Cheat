@@ -112,6 +112,7 @@
             this.listBox1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listBox1.ForeColor = System.Drawing.Color.White;
             this.listBox1.FormattingEnabled = true;
+            this.listBox1.IntegralHeight = false;
             this.listBox1.ItemHeight = 21;
             this.listBox1.Location = new System.Drawing.Point(44, 43);
             this.listBox1.Name = "listBox1";
