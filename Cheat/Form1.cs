@@ -17,6 +17,7 @@ namespace Cheat
         // Used to indicate the "Start Typing..." is on display
         //
         private bool _initalState = true;
+        private bool _isChanging = false;
       
         private string[] _fileNames;
         private Dictionary<string,List<string>> _tags = new Dictionary<string, List<string>>();
@@ -460,8 +461,18 @@ namespace Cheat
                 textBox1.Text = "Start typing...";
                 _initalState = true;
             }
+            if (_isChanging)
+            {
+
+                textBox1.Select(0, 0);
+                textBox1.SelectionStart = 0;
+                textBox1.SelectionLength = 0;
+                _isChanging = false;
+                Console.WriteLine($"In the if and setting the cursor {textBox1.SelectionStart}");
+            }
+            
         }
-        #region Coomand_Handling
+        #region Command_Handling
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -885,8 +896,14 @@ namespace Cheat
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+         
+            _isChanging = true;
+            textBox1.Select(0, 0);
             textBox1.Text = (string)listBox1.Items[listBox1.SelectedIndex];
+         
+
         }
         #endregion
+
     }
 }
