@@ -272,6 +272,7 @@ namespace Cheat
                 }
 
                 textBox.Clear();
+                _findList.Clear();
                 listBox1.Items.Clear();
                 foreach(var cheat in _fileNames)
                 {
@@ -344,10 +345,13 @@ namespace Cheat
             textBox.Text = sb.ToString();
 
         }
+        #region Commands
 
         private void ShowList(TextBox textBox)
         {
             textBox.Clear();
+            _findList.Clear();
+            listBox1.Items.Clear();
             foreach (var f in _fileNames)
             {
                 //   textBox.Text += f + Environment.NewLine;
@@ -413,6 +417,8 @@ namespace Cheat
 
                 if (_tags.ContainsKey(param))
                 {
+                    _findList.Clear();
+                    listBox1.Items.Clear();
                     textBox.Clear();
                    // textBox.Text = $"Cheats with tag: {param}" + Environment.NewLine;
                     foreach (var t in _tags[param])
@@ -443,7 +449,8 @@ namespace Cheat
                 Console.WriteLine($"{Configuration.FilesLocation}\\{param}");
             }
         }
-
+        #endregion
+        
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             Console.WriteLine($"in the text changed event .. text is {textBox1.Text}");
@@ -454,6 +461,7 @@ namespace Cheat
                 _initalState = true;
             }
         }
+        #region Coomand_Handling
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -646,6 +654,9 @@ namespace Cheat
                 }
             }
         }
+        #endregion
+
+        #region Utils
 
         public bool GetAutoCopyFlag(string[] contents)
         {
@@ -876,5 +887,6 @@ namespace Cheat
         {
             textBox1.Text = (string)listBox1.Items[listBox1.SelectedIndex];
         }
+        #endregion
     }
 }
