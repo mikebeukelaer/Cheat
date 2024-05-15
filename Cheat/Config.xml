@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <config>
-  <cheatsfolder>..\..\Data</cheatsfolder>
+  <cheatsfolder>..\..\..\Data</cheatsfolder>
   <includeSubDir>true</includeSubDir>
   <editor>c:\windows\notepad.exe</editor>
   <backcolor>32,32,32</backcolor>
