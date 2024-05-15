@@ -32,7 +32,8 @@ namespace Cheat
             
         }
 
-
+        // Needed to allow for resizing with no borders
+        //
         protected override void WndProc(ref Message m)
         {
             const int RESIZE_HANDLE_SIZE = 10;

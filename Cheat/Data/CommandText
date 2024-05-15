@@ -1,5 +1,6 @@
 ---
 Tags: [rebex,wince]
+autocopy: true
 ---
 	using RebexHttpRequest = Rebex.Net.HttpRequest;
 	using RebexHttpResponse = Rebex.Net.HttpResponse;
