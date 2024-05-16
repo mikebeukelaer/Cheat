@@ -1,6 +1,5 @@
 ---
-Tags: [rebex,wince]
-autocopy: true
+Tags: [random]
+autocopy: false
 ---
-	using RebexHttpRequest = Rebex.Net.HttpRequest;
-	using RebexHttpResponse = Rebex.Net.HttpResponse;
+some random text

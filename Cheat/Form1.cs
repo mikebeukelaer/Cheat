@@ -930,6 +930,8 @@ namespace Cheat
         {
 
             var item = listBox1.Items[e.Index].ToString();
+            item = FirstLetterToUpperCase(item);
+
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             if (e.State != DrawItemState.Selected)
             {
@@ -1056,6 +1058,14 @@ namespace Cheat
             path.CloseFigure();
             return path;
         }
+        public static string FirstLetterToUpperCase(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                throw new ArgumentException("There is no first letter");
 
+            char[] a = s.ToCharArray();
+            a[0] = char.ToUpper(a[0]);
+            return new string(a);
+        }
     }
 }
