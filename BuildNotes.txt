@@ -1,0 +1,2 @@
+ Setup project command line build :
+ devenv "D:\Cheat\Cheat.sln"  /Project "d:\Cheat\Installer\Installer.vdproj" /build Release
