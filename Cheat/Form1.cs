@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Windows.Forms;
@@ -425,7 +427,8 @@ namespace Cheat
         private void ShowVersion(TextBox textBox)
         {
             textBox.Clear();
-            textBox.Text = Environment.NewLine + $" Version :{Application.ProductVersion}";
+            var productVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            textBox.Text = Environment.NewLine + $" Version :{productVersion}";
         }
 
         private void ShowListTags(TextBox textBox, TextBox input)
@@ -933,16 +936,19 @@ namespace Cheat
             item = FirstLetterToUpperCase(item);
 
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
             if (e.State != DrawItemState.Selected)
             {
                 e.Graphics.FillRectangle(new SolidBrush(Configuration.BackColor), e.Bounds);
-
             }
             else
             {
                 var tmp = e.Bounds;
-                tmp.Inflate(-2,-2);
-
+             //   tmp.Inflate(-2,-2);
+                tmp.X = tmp.X + 2;
+                tmp.Y = tmp.Y + 2;
+                tmp.Width = tmp.Width - 10;
+                tmp.Height = tmp.Height - 4;
                 FillRoundedRectangle(e.Graphics, new SolidBrush(Color.FromArgb(48, 48, 48)), tmp , 4);
             }
             
@@ -960,19 +966,8 @@ namespace Cheat
             }
             else
             {
-                Rectangle rect1 = new Rectangle(e.Bounds.Left+1, e.Bounds.Top + 10, 3, e.Bounds.Height - 20);
-                FillRoundedRectangle(e.Graphics, new SolidBrush(SystemColors.Highlight),rect1,2);
-
-                //if (_filesToTags.ContainsKey(item))
-                //{
-                //    if (_filesToTags[item].AutoCopy)
-                //    {
-                //        var img = new Bitmap(Resources.copyto_greyscale);
-                //        var imgRect = new Rectangle(e.Bounds.X + 7, e.Bounds.Y + 25, 16, 16);
-                //        e.Graphics.DrawImage(img, imgRect);
-                //    }
-
-                //}
+                Rectangle rect1 = new Rectangle(e.Bounds.Left+3, e.Bounds.Top + 15, 3, e.Bounds.Height - 30);
+                FillRoundedRectangle(e.Graphics, new SolidBrush(Color.FromArgb(30,155,250)),rect1,2);
 
             }
 
@@ -980,23 +975,24 @@ namespace Cheat
             {
                 if (_filesToTags[item].AutoCopy)
                 {
-                    var img = new Bitmap(Resources.copyto_greyscale);
-                    var imgRect = new Rectangle(e.Bounds.X + 7, e.Bounds.Y + 20, 16, 16);
+                    var img = new Bitmap(Resources.copyto);
+                    var imgRect = new Rectangle(e.Bounds.X + 15, e.Bounds.Y + 20, 16, 16);
                     e.Graphics.DrawImage(img, imgRect);
                 }
 
             }
 
             var rect = new Rectangle();
-            rect.X = e.Bounds.Left + 25;
+            rect.X = e.Bounds.Left + 40;
             rect.Y = e.Bounds.Y + 2;
-            rect.Width = e.Bounds.Width -15;
+            rect.Width = e.Bounds.Width - 80;
             rect.Height = e.Bounds.Height -2;
             
             var font = new Font("Segoe UI", 12, FontStyle.Bold);
 
             e.Graphics.DrawString(item, font, new SolidBrush(Color.White), rect);
-            var smallerFont = new Font("Segoe UI", 10);
+
+            var smallerFont = new Font("Segoe UI Semibold", 10);
 
             if (_filesToTags.ContainsKey(item))
             {

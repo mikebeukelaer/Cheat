@@ -114,7 +114,7 @@
             listBox1.FormattingEnabled = true;
             listBox1.IntegralHeight = false;
             listBox1.ItemHeight = 55;
-            listBox1.Location = new System.Drawing.Point(44, 43);
+            listBox1.Location = new System.Drawing.Point(5, 43);
             listBox1.Name = "listBox1";
             listBox1.Size = new System.Drawing.Size(599, 84);
             listBox1.TabIndex = 5;
