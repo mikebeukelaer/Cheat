@@ -45,7 +45,7 @@ namespace Cheat
             this.FormBorderStyle = FormBorderStyle.None;
             picCopy.Visible = false;
             listBox1.Visible = false;
-
+            SetStyle(ControlStyles.OptimizedDoubleBuffer,true);
         }
 
         // Needed to allow for resizing with no borders
@@ -244,7 +244,7 @@ namespace Cheat
         private void ResizeHeightOfListBox(ListBox listBox)
         {
             var computedHeight = (listBox.ItemHeight * listBox.Items.Count) + 4;
-            var newHeight = Math.Min(computedHeight, this.Height - textBox1.Bottom + 2);
+            var newHeight = Math.Min(computedHeight, this.Height - textBox1.Bottom - 20);
             listBox.Height = newHeight;
         }
         private void BuildTagList(string fileName, string pathName, string rootDir)
@@ -272,8 +272,8 @@ namespace Cheat
 
                 _filesToTags[fName] =
                     new FileInfo
-                    { Tags = tags, AutoCopy = autoCopy, Name= fName };   
-                        
+                    { Tags = tags, AutoCopy = autoCopy, Name = fName };
+
             }
         }
 
@@ -915,6 +915,8 @@ namespace Cheat
             textBox2.Width = this.Width - 30;
             textBox2.Height = this.Height - 60;
             listBox1.Width = this.Width - listBox1.Left - 2;
+            ResizeHeightOfListBox(listBox1);
+            listBox1.Invalidate();
 
         }
 
@@ -924,6 +926,7 @@ namespace Cheat
             _isChanging = true;
             textBox1.Select(0, 0);
             textBox1.Text = (string)listBox1.Items[listBox1.SelectedIndex];
+            System.Diagnostics.Trace.WriteLine($"selected index : {listBox1.SelectedIndex}");
 
 
         }
@@ -934,40 +937,43 @@ namespace Cheat
 
             var item = listBox1.Items[e.Index].ToString();
             item = FirstLetterToUpperCase(item);
-
+         
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-            if (e.State != DrawItemState.Selected)
+            if ((e.State & DrawItemState.Selected) != DrawItemState.Selected  )
             {
+                
                 e.Graphics.FillRectangle(new SolidBrush(Configuration.BackColor), e.Bounds);
             }
             else
             {
-                var tmp = e.Bounds;
-             //   tmp.Inflate(-2,-2);
-                tmp.X = tmp.X + 2;
-                tmp.Y = tmp.Y + 2;
-                tmp.Width = tmp.Width - 10;
-                tmp.Height = tmp.Height - 4;
-                FillRoundedRectangle(e.Graphics, new SolidBrush(Color.FromArgb(48, 48, 48)), tmp , 4);
+                
+                    var tmp = e.Bounds;
+                    //   tmp.Inflate(-2,-2);
+                    tmp.X = tmp.X + 2;
+                    tmp.Y = tmp.Y + 2;
+                    tmp.Width = tmp.Width - 10;
+                    tmp.Height = tmp.Height - 4;
+                    FillRoundedRectangle(e.Graphics, new SolidBrush(Color.FromArgb(48, 48, 48)), tmp, 4);
+
             }
-            
+
             var left = e.Bounds.X + 2;
-            var top =  e.Bounds.Y + ( e.Bounds.Height/2) - (10/2);
-            
+            var top = e.Bounds.Y + (e.Bounds.Height / 2) - (10 / 2);
+
             StringFormat stringFormat = new StringFormat();
             stringFormat.Alignment = StringAlignment.Near;
             stringFormat.LineAlignment = StringAlignment.Center;
 
-            if (e.State != DrawItemState.Selected)
+            if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
             {
                 //e.Graphics.DrawEllipse(new Pen(new SolidBrush(Color.White), 2), new Rectangle(left, top, 10, 10));
 
             }
             else
             {
-                Rectangle rect1 = new Rectangle(e.Bounds.Left+3, e.Bounds.Top + 15, 3, e.Bounds.Height - 30);
-                FillRoundedRectangle(e.Graphics, new SolidBrush(Color.FromArgb(30,155,250)),rect1,2);
+                Rectangle rect1 = new Rectangle(e.Bounds.Left + 3, e.Bounds.Top + 15, 3, e.Bounds.Height - 30);
+                FillRoundedRectangle(e.Graphics, new SolidBrush(Color.FromArgb(30, 155, 250)), rect1, 2);
 
             }
 
@@ -986,8 +992,8 @@ namespace Cheat
             rect.X = e.Bounds.Left + 40;
             rect.Y = e.Bounds.Y + 2;
             rect.Width = e.Bounds.Width - 80;
-            rect.Height = e.Bounds.Height -2;
-            
+            rect.Height = e.Bounds.Height - 2;
+
             var font = new Font("Segoe UI", 12, FontStyle.Bold);
 
             e.Graphics.DrawString(item, font, new SolidBrush(Color.White), rect);
@@ -1008,6 +1014,7 @@ namespace Cheat
             }
 
             font.Dispose();
+            
         }
 
         private void FillRoundedRectangle(Graphics graphics, Brush brush, Rectangle bounds, int cornerRadius)
@@ -1062,6 +1069,25 @@ namespace Cheat
             char[] a = s.ToCharArray();
             a[0] = char.ToUpper(a[0]);
             return new string(a);
+        }
+
+        private void listBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape && textBox1.Text.Trim() != string.Empty)
+            {
+                if (_initalState) { this.Close(); }
+
+                textBox1.Text = "";
+                _initalState = true;
+                listBox1.Visible = false;
+                return;
+
+            }
+        }
+
+        private void listBox1_Leave(object sender, EventArgs e)
+        {
+            System.Diagnostics.Trace.WriteLine("Lost focus");
         }
     }
 }

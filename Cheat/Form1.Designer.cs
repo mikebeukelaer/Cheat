@@ -120,6 +120,8 @@
             listBox1.TabIndex = 5;
             listBox1.DrawItem += listBox1_DrawItem;
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            listBox1.KeyDown += listBox1_KeyDown;
+            listBox1.Leave += listBox1_Leave;
             // 
             // Form1
             // 
