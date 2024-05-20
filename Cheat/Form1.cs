@@ -46,6 +46,7 @@ namespace Cheat
             picCopy.Visible = false;
             listBox1.Visible = false;
             SetStyle(ControlStyles.OptimizedDoubleBuffer,true);
+            SetDoubleBuffer(listBox1);
         }
 
         // Needed to allow for resizing with no borders
@@ -926,20 +927,136 @@ namespace Cheat
             _isChanging = true;
             textBox1.Select(0, 0);
             textBox1.Text = (string)listBox1.Items[listBox1.SelectedIndex];
-            System.Diagnostics.Trace.WriteLine($"selected index : {listBox1.SelectedIndex}");
+           // System.Diagnostics.Trace.WriteLine($"selected index : {listBox1.SelectedIndex}");
 
 
         }
         #endregion
+        private void DrawItem(object sender, DrawItemEventArgs e)
+        {
+            var bitmap = new Bitmap(e.Bounds.Width, e.Bounds.Height);  
+            var bounds = e.Bounds;
+            bounds.Y = 0;
+            var graphics = Graphics.FromImage(bitmap);
+
+            //var tmpH = e.Index * e.Bounds.Height;
+            //var r = e.Bounds;
+            //r.Y = tmpH;
+            var item = listBox1.Items[e.Index].ToString();
+            item = FirstLetterToUpperCase(item);
+            //g.DrawString(item, new Font("Arial", 10), new SolidBrush(Color.White), new Point(0, 0));
+
+            //System.Diagnostics.Trace.WriteLine($"Y : {e.Bounds.Y}");
+            //e.Graphics.DrawImage(bitmap, r);
+
+
+            //return;
+
+
+            graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+            if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
+            {
+
+                graphics.FillRectangle(new SolidBrush(Configuration.BackColor), bounds);
+            }
+            else
+            {
+
+                var tmp = bounds;
+                //   tmp.Inflate(-2,-2);
+                tmp.X = tmp.X + 2;
+                tmp.Y = tmp.Y + 2;
+                tmp.Width = tmp.Width - 10;
+                tmp.Height = tmp.Height - 4;
+                FillRoundedRectangle(graphics, new SolidBrush(Color.FromArgb(48, 48, 48)), tmp, 4);
+
+            }
+
+            var left = bounds.X + 2;
+            var top = bounds.Y + (bounds.Height / 2) - (10 / 2);
+
+            StringFormat stringFormat = new StringFormat();
+            stringFormat.Alignment = StringAlignment.Near;
+            stringFormat.LineAlignment = StringAlignment.Center;
+
+            if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
+            {
+                //e.Graphics.DrawEllipse(new Pen(new SolidBrush(Color.White), 2), new Rectangle(left, top, 10, 10));
+
+            }
+            else
+            {
+                Rectangle rect1 = new Rectangle(bounds.Left + 3, bounds.Top + 15, 3, bounds.Height - 30);
+                FillRoundedRectangle(graphics, new SolidBrush(Color.FromArgb(30, 155, 250)), rect1, 2);
+
+            }
+
+            if (_filesToTags.ContainsKey(item))
+            {
+                if (_filesToTags[item].AutoCopy)
+                {
+                    var img = new Bitmap(Resources.copyto);
+                    var imgRect = new Rectangle(bounds.X + 15, bounds.Y + 20, 16, 16);
+                    graphics.DrawImage(img, imgRect);
+                }
+
+            }
+
+            var rect = new Rectangle();
+            rect.X = bounds.Left + 40;
+            rect.Y = bounds.Y + 2;
+            rect.Width = bounds.Width - 80;
+            rect.Height = bounds.Height - 2;
+
+            var font = new Font("Segoe UI", 12, FontStyle.Bold);
+
+            graphics.DrawString(item, font, new SolidBrush(Color.White), rect);
+
+            var smallerFont = new Font("Segoe UI Semibold", 10);
+
+            if (_filesToTags.ContainsKey(item))
+            {
+                var tags = _filesToTags[item].Tags.Select(x => x.ToString()).ToArray();
+                var taglist = string.Join(", ", tags);
+                rect.Offset(2, 25);
+                graphics.DrawString($"Tags: {taglist}", smallerFont, new SolidBrush(Color.White), rect); ;
+            }
+            else
+            {
+                rect.Offset(2, 25);
+                graphics.DrawString($"Tags: <none>", smallerFont, new SolidBrush(Color.Gray), rect); ;
+            }
+
+            font.Dispose();
+            
+            e.Graphics.DrawImage(bitmap,new Point(0, e.Bounds.Y));
+
+
+        }
+
+        public void SetDoubleBuffer(ListBox listbox)
+        {
+            System.Reflection.PropertyInfo aProp =
+         typeof(System.Windows.Forms.Control).GetProperty(
+               "DoubleBuffered",
+               System.Reflection.BindingFlags.NonPublic |
+               System.Reflection.BindingFlags.Instance);
+
+            aProp.SetValue(listbox, true, null);
+        }
 
         private void listBox1_DrawItem(object sender, DrawItemEventArgs e)
         {
-
+            //  DrawItem(sender, e);
+            //  return;
+            
             var item = listBox1.Items[e.Index].ToString();
             item = FirstLetterToUpperCase(item);
-         
+
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+            
             if ((e.State & DrawItemState.Selected) != DrawItemState.Selected  )
             {
                 
@@ -967,7 +1084,7 @@ namespace Cheat
 
             if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
             {
-                //e.Graphics.DrawEllipse(new Pen(new SolidBrush(Color.White), 2), new Rectangle(left, top, 10, 10));
+               // e.Graphics.DrawEllipse(new Pen(new SolidBrush(Color.White), 2), new Rectangle(left, top, 10, 10));
 
             }
             else
