@@ -15,13 +15,13 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_9C89DFCACB534345AD8C1207FD016EE9"
+        "MsmKey" = "8:_821F8ED8575744FC88A7949BA5472473"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_EAA25CA88529494DA012B7C52188B225"
+        "MsmKey" = "8:_9C89DFCACB534345AD8C1207FD016EE9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -218,7 +218,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Cheat"
         "ProductCode" = "8:{F95A0367-1AE3-4E10-8235-B2642C8E885B}"
-        "PackageCode" = "8:{C18EB976-78B8-4CB4-92C9-8FA1F38D31EB}"
+        "PackageCode" = "8:{0B0FC5E3-DCC0-4633-B033-AE918884FFFF}"
         "UpgradeCode" = "8:{9FC4C03A-999A-4723-851F-8EAF0F5E443A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -338,7 +338,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_3E31BE3F53C045328F992832D4758975"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_63D00D2C80D24AA5A49FB5A550D18592"
             {
             "Name" = "8:Cheat"
             "Arguments" = "8:"
@@ -346,7 +346,7 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_EAA25CA88529494DA012B7C52188B225"
+            "Target" = "8:_821F8ED8575744FC88A7949BA5472473"
             "Folder" = "8:_EF8E08AF0C0B40B49EC351BB8F0D3623"
             "WorkingFolder" = "8:_4176D98AC7634A388C1F1D09B068861C"
             "Icon" = "8:"
@@ -751,9 +751,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EAA25CA88529494DA012B7C52188B225"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_821F8ED8575744FC88A7949BA5472473"
             {
-            "SourcePath" = "8:..\\Cheat\\obj\\Release\\net8.0-windows\\Cheat.dll"
+            "SourcePath" = "8:..\\Cheat\\obj\\Release\\net8.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_4176D98AC7634A388C1F1D09B068861C"
@@ -771,12 +771,13 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
+            "OutputConfiguration" = "8:Release|Any CPU"
+            "OutputGroupCanonicalName" = "8:PublishItems"
             "OutputProjectGuid" = "8:{4E1CEDC7-F231-4026-86CA-41714D23E72F}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
+                "ExcludeFilter" = "8:Config.xml"
                 }
             }
         }

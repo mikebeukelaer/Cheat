@@ -160,6 +160,7 @@
         private System.Windows.Forms.Label lblCopyIndicator;
         private System.Windows.Forms.PictureBox picCopy;
         private System.Windows.Forms.ListBox listBox1;
+        
     }
 }
 

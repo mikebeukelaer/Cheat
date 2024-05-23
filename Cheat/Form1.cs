@@ -46,7 +46,7 @@ namespace Cheat
             picCopy.Visible = false;
             listBox1.Visible = false;
             SetStyle(ControlStyles.OptimizedDoubleBuffer,true);
-            SetDoubleBuffer(listBox1);
+           // SetDoubleBuffer(listBox1);
         }
 
         // Needed to allow for resizing with no borders
@@ -270,8 +270,8 @@ namespace Cheat
 
                 }
                 var autoCopy = GetAutoCopyFlag(contents);
-
-                _filesToTags[fName] =
+                
+                _filesToTags[fName.ToLower()] =
                     new FileInfo
                     { Tags = tags, AutoCopy = autoCopy, Name = fName };
 
@@ -781,7 +781,7 @@ namespace Cheat
             if (endIndex > startIndex)
             {
                 var tagValue = FindTagValue(fileContents, "tags", startIndex, endIndex);
-
+                
                 if (tagValue == string.Empty) { return retVal; }
 
                 var leftBracket = tagValue.IndexOf('[');
@@ -1017,6 +1017,7 @@ namespace Cheat
 
             if (_filesToTags.ContainsKey(item))
             {
+                
                 var tags = _filesToTags[item].Tags.Select(x => x.ToString()).ToArray();
                 var taglist = string.Join(", ", tags);
                 rect.Offset(2, 25);
@@ -1094,9 +1095,9 @@ namespace Cheat
 
             }
 
-            if (_filesToTags.ContainsKey(item))
+            if (_filesToTags.ContainsKey(item.ToLower()))
             {
-                if (_filesToTags[item].AutoCopy)
+                if (_filesToTags[item.ToLower()].AutoCopy)
                 {
                     var img = new Bitmap(Resources.copyto);
                     var imgRect = new Rectangle(e.Bounds.X + 15, e.Bounds.Y + 20, 16, 16);
@@ -1117,9 +1118,9 @@ namespace Cheat
 
             var smallerFont = new Font("Segoe UI Semibold", 10);
 
-            if (_filesToTags.ContainsKey(item))
+            if (_filesToTags.ContainsKey(item.ToLower()))
             {
-                var tags = _filesToTags[item].Tags.Select(x => x.ToString()).ToArray();
+                var tags = _filesToTags[item.ToLower()].Tags.Select(x => x.ToString()).ToArray();
                 var taglist = string.Join(", ", tags);
                 rect.Offset(2, 25);
                 e.Graphics.DrawString($"Tags: {taglist}", smallerFont, new SolidBrush(Color.White), rect); ;
