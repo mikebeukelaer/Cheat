@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             textBox1 = new System.Windows.Forms.TextBox();
             textBox2 = new System.Windows.Forms.TextBox();
             lblCopyIndicator = new System.Windows.Forms.Label();
             picCopy = new System.Windows.Forms.PictureBox();
             pictureBox1 = new System.Windows.Forms.PictureBox();
-            listBox1 = new System.Windows.Forms.ListBox();
+            customListBox1 = new CustomListBox();
             ((System.ComponentModel.ISupportInitialize)picCopy).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -63,7 +64,7 @@
             textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             textBox2.Font = new System.Drawing.Font("Cascadia Mono", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             textBox2.ForeColor = System.Drawing.Color.White;
-            textBox2.Location = new System.Drawing.Point(14, 51);
+            textBox2.Location = new System.Drawing.Point(10, 51);
             textBox2.Margin = new System.Windows.Forms.Padding(4);
             textBox2.Multiline = true;
             textBox2.Name = "textBox2";
@@ -104,24 +105,18 @@
             pictureBox1.TabIndex = 2;
             pictureBox1.TabStop = false;
             // 
-            // listBox1
+            // customListBox1
             // 
-            listBox1.BackColor = System.Drawing.Color.FromArgb(32, 32, 32);
-            listBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            listBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            listBox1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            listBox1.ForeColor = System.Drawing.Color.White;
-            listBox1.FormattingEnabled = true;
-            listBox1.IntegralHeight = false;
-            listBox1.ItemHeight = 55;
-            listBox1.Location = new System.Drawing.Point(5, 43);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new System.Drawing.Size(599, 84);
-            listBox1.TabIndex = 5;
-            listBox1.DrawItem += listBox1_DrawItem;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
-            listBox1.KeyDown += listBox1_KeyDown;
-            listBox1.Leave += listBox1_Leave;
+            customListBox1.Items = (System.Collections.Generic.List<string>)resources.GetObject("customListBox1.Items");
+            customListBox1.Location = new System.Drawing.Point(3, 51);
+            customListBox1.Name = "customListBox1";
+            customListBox1.Size = new System.Drawing.Size(704, 177);
+            customListBox1.TabIndex = 6;
+            customListBox1.OnItemSelected += customListBox1_OnItemSelected;
+            customListBox1.OnEnterPresssed += customListBox1_OnEnterPresssed;
+            customListBox1.OnEscapePressed += customListBox1_OnEscapePressed;
+            customListBox1.KeyDown += customListBox1_KeyDown;
+            customListBox1.KeyPress += customListBox1_KeyPress;
             // 
             // Form1
             // 
@@ -129,7 +124,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackColor = System.Drawing.Color.FromArgb(32, 32, 32);
             ClientSize = new System.Drawing.Size(730, 371);
-            Controls.Add(listBox1);
+            Controls.Add(customListBox1);
             Controls.Add(picCopy);
             Controls.Add(lblCopyIndicator);
             Controls.Add(pictureBox1);
@@ -159,8 +154,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label lblCopyIndicator;
         private System.Windows.Forms.PictureBox picCopy;
-        private System.Windows.Forms.ListBox listBox1;
-        
+        private CustomListBox customListBox1;
     }
 }
 

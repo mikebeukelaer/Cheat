@@ -27,7 +27,9 @@ namespace Cheat
         private string[] _fileNames;
         private Dictionary<string, List<string>> _tags = new Dictionary<string, List<string>>();
 
-        private struct FileInfo
+        private Action<string> log = x => System.Diagnostics.Debug.WriteLine(x);
+
+        protected struct FileInfo
         {
             public string Name;
             public bool AutoCopy;
@@ -35,7 +37,7 @@ namespace Cheat
         }
 
 
-        private Dictionary<string, FileInfo> _filesToTags = new Dictionary<string, FileInfo>();
+        private Dictionary<string, CUtils.FileInfo> _filesToTags = new Dictionary<string, CUtils.FileInfo>();
 
         private List<string> _findList = new List<string>();
         private int _findListIndex = 0;
@@ -44,9 +46,10 @@ namespace Cheat
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.None;
             picCopy.Visible = false;
-            listBox1.Visible = false;
-            SetStyle(ControlStyles.OptimizedDoubleBuffer,true);
-           // SetDoubleBuffer(listBox1);
+           
+            customListBox1.Visible = false;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            // SetDoubleBuffer(listBox1);
         }
 
         // Needed to allow for resizing with no borders
@@ -270,10 +273,11 @@ namespace Cheat
 
                 }
                 var autoCopy = GetAutoCopyFlag(contents);
-                
+
                 _filesToTags[fName.ToLower()] =
-                    new FileInfo
+                    new CUtils.FileInfo
                     { Tags = tags, AutoCopy = autoCopy, Name = fName };
+                customListBox1.FilesToFlag = _filesToTags;
 
             }
         }
@@ -297,7 +301,7 @@ namespace Cheat
 
                 textBox.Clear();
                 _findList.Clear();
-                listBox1.Items.Clear();
+               
                 foreach (var cheat in _fileNames)
                 {
 
@@ -309,17 +313,21 @@ namespace Cheat
                         {
                             //  textBox.Text += cheat + Environment.NewLine;
                             _findList.Add(cheat);
-                            listBox1.Items.Add(cheat);
+                          
                             break;
                         }
                     }
                 }
                 if (_findList.Count > 0)
                 {
-                    listBox1.Visible = true;
-                    listBox1.SelectedIndex = 0;
-                    ResizeHeightOfListBox(listBox1);
-                    // listBox1.Focus();
+                  
+                    customListBox1.Visible = true;
+                    customListBox1.Items = _findList;
+                    customListBox1.Update();
+                    customListBox1.Invalidate();
+                    customListBox1.Focus();
+                    textBox1.Text = _findList[0];
+                    
                 }
             }
         }
@@ -375,19 +383,23 @@ namespace Cheat
         {
             textBox.Clear();
             _findList.Clear();
-            listBox1.Items.Clear();
+           
             foreach (var f in _fileNames)
             {
                 //   textBox.Text += f + Environment.NewLine;
-                listBox1.Items.Add(f);
+            
                 _findList.Add(f);
             }
             if (_findList.Count > 0)
             {
-                listBox1.Visible = true;
-                listBox1.SelectedIndex = 0;
-                ResizeHeightOfListBox(listBox1);
-                // listBox1.Focus();
+              
+                customListBox1.Visible = true;
+                customListBox1.Items = _findList;
+                customListBox1.Update();
+                customListBox1.Invalidate();
+                customListBox1.Focus();
+                textBox1.Text = _findList[0];
+
             }
 
         }
@@ -443,23 +455,28 @@ namespace Cheat
                 if (_tags.ContainsKey(param))
                 {
                     _findList.Clear();
-                    listBox1.Items.Clear();
+                   
                     textBox.Clear();
                     // textBox.Text = $"Cheats with tag: {param}" + Environment.NewLine;
                     foreach (var t in _tags[param])
                     {
                         //  textBox.Text += "  " + t + Environment.NewLine;
                         _findList.Add(t);
-                        listBox1.Items.Add(t);
+                   
                     }
                 }
             }
             if (_findList.Count > 0)
             {
-                listBox1.Visible = true;
-                listBox1.SelectedIndex = 0;
-                ResizeHeightOfListBox(listBox1);
-                // listBox1.Focus();
+                
+
+                customListBox1.Visible = true;
+                customListBox1.Items = _findList;
+                customListBox1.Update();
+                customListBox1.Invalidate();
+                customListBox1.Focus();
+                textBox1.Text = _findList[0];
+
             }
         }
 
@@ -478,7 +495,8 @@ namespace Cheat
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            Console.WriteLine($"in the text changed event .. text is {textBox1.Text}");
+            log($"in the text changed event .. text is {textBox1.Text}");
+            log($"in the text changed event state is  {_initalState}");
             if (textBox1.Text == string.Empty && !_initalState)
             {
                 Console.WriteLine("Text changed");
@@ -514,8 +532,7 @@ namespace Cheat
                     {
                         _findListIndex = 0;
                     }
-                    listBox1.SelectedIndex = _findListIndex;
-                    listBox1.SelectedItem = _findListIndex;
+                 
                     //textBox1.Text = _findList[_findListIndex];
 
                     //textBox1.SelectAll();
@@ -538,8 +555,7 @@ namespace Cheat
                     {
                         _findListIndex = 0;
                     }
-                    listBox1.SelectedIndex = _findListIndex;
-                    listBox1.SelectedItem = _findListIndex;
+                   
                     //textBox1.Text = _findList[_findListIndex];
 
                     //textBox1.SelectAll();
@@ -553,7 +569,8 @@ namespace Cheat
             {
                 _findList = new List<string>();
                 _findListIndex = 0;
-                listBox1.Visible = false;
+               
+                customListBox1.Visible =false;
             }
 
             if (e.KeyCode == Keys.Escape && textBox1.Text.Trim() != string.Empty)
@@ -562,7 +579,8 @@ namespace Cheat
 
                 textBox1.Text = "";
                 _initalState = true;
-                listBox1.Visible = false;
+              
+                customListBox1.Visible = false;
                 return;
 
             }
@@ -588,7 +606,7 @@ namespace Cheat
 
             if (e.KeyCode == Keys.Enter)
             {
-                listBox1.Visible = false;
+               
 
                 if (textBox1.Text.ToLower().TrimStart() == "--help")
                 {
@@ -690,6 +708,54 @@ namespace Cheat
                 }
             }
         }
+
+        private void LoadCheat()
+        {
+            var appender = string.Empty;
+            if (File.Exists(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
+            {
+                textBox2.Clear();
+                var contents = File.ReadAllLines(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}");
+
+                var autoCopyFlag = GetAutoCopyFlag(contents);
+
+                var index = SkipConfig(contents);
+
+                if (index > 0 && index <= contents.Length - 1)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = index; i < contents.Length; i++)
+                    {
+                        sb.Append(contents[i]);
+                        sb.Append(Environment.NewLine);
+                    }
+                    textBox2.Text = sb.ToString();
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var c in contents)
+                    {
+                        sb.Append(c);
+                        sb.Append(Environment.NewLine);
+                    }
+                    textBox2.Text = sb.ToString();
+                }
+
+                if (autoCopyFlag)
+                {
+                    picCopy.Visible = true;
+                    Clipboard.SetText(textBox2.Text);
+                }
+                else
+                {
+                    picCopy.Visible = false;
+                }
+
+
+            }
+        }
+
         #endregion
 
         #region Utils
@@ -781,7 +847,7 @@ namespace Cheat
             if (endIndex > startIndex)
             {
                 var tagValue = FindTagValue(fileContents, "tags", startIndex, endIndex);
-                
+
                 if (tagValue == string.Empty) { return retVal; }
 
                 var leftBracket = tagValue.IndexOf('[');
@@ -915,26 +981,17 @@ namespace Cheat
             this.Refresh();
             textBox2.Width = this.Width - 30;
             textBox2.Height = this.Height - 60;
-            listBox1.Width = this.Width - listBox1.Left - 2;
-            ResizeHeightOfListBox(listBox1);
-            listBox1.Invalidate();
+          
+            customListBox1.Width = this.Width - 6;
+            customListBox1.Height = textBox2.Height;
 
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-            _isChanging = true;
-            textBox1.Select(0, 0);
-            textBox1.Text = (string)listBox1.Items[listBox1.SelectedIndex];
-           // System.Diagnostics.Trace.WriteLine($"selected index : {listBox1.SelectedIndex}");
-
-
-        }
         #endregion
+        /**
         private void DrawItem(object sender, DrawItemEventArgs e)
         {
-            var bitmap = new Bitmap(e.Bounds.Width, e.Bounds.Height);  
+            var bitmap = new Bitmap(e.Bounds.Width, e.Bounds.Height);
             var bounds = e.Bounds;
             bounds.Y = 0;
             var graphics = Graphics.FromImage(bitmap);
@@ -943,7 +1000,7 @@ namespace Cheat
             //var r = e.Bounds;
             //r.Y = tmpH;
             var item = listBox1.Items[e.Index].ToString();
-            item = FirstLetterToUpperCase(item);
+            item = CUtils.FirstLetterToUpperCase(item);
             //g.DrawString(item, new Font("Arial", 10), new SolidBrush(Color.White), new Point(0, 0));
 
             //System.Diagnostics.Trace.WriteLine($"Y : {e.Bounds.Y}");
@@ -1017,7 +1074,7 @@ namespace Cheat
 
             if (_filesToTags.ContainsKey(item))
             {
-                
+
                 var tags = _filesToTags[item].Tags.Select(x => x.ToString()).ToArray();
                 var taglist = string.Join(", ", tags);
                 rect.Offset(2, 25);
@@ -1030,11 +1087,12 @@ namespace Cheat
             }
 
             font.Dispose();
-            
-            e.Graphics.DrawImage(bitmap,new Point(0, e.Bounds.Y));
+
+            e.Graphics.DrawImage(bitmap, new Point(0, e.Bounds.Y));
 
 
         }
+        */
 
         public void SetDoubleBuffer(ListBox listbox)
         {
@@ -1046,33 +1104,33 @@ namespace Cheat
 
             aProp.SetValue(listbox, true, null);
         }
-
+        /**
         private void listBox1_DrawItem(object sender, DrawItemEventArgs e)
         {
             //  DrawItem(sender, e);
             //  return;
-            
+
             var item = listBox1.Items[e.Index].ToString();
-            item = FirstLetterToUpperCase(item);
+            item = CUtils.FirstLetterToUpperCase(item);
 
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-            
-            if ((e.State & DrawItemState.Selected) != DrawItemState.Selected  )
+
+            if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
             {
-                
+
                 e.Graphics.FillRectangle(new SolidBrush(Configuration.BackColor), e.Bounds);
             }
             else
             {
-                
-                    var tmp = e.Bounds;
-                    //   tmp.Inflate(-2,-2);
-                    tmp.X = tmp.X + 2;
-                    tmp.Y = tmp.Y + 2;
-                    tmp.Width = tmp.Width - 10;
-                    tmp.Height = tmp.Height - 4;
-                    FillRoundedRectangle(e.Graphics, new SolidBrush(Color.FromArgb(48, 48, 48)), tmp, 4);
+
+                var tmp = e.Bounds;
+                //   tmp.Inflate(-2,-2);
+                tmp.X = tmp.X + 2;
+                tmp.Y = tmp.Y + 2;
+                tmp.Width = tmp.Width - 10;
+                tmp.Height = tmp.Height - 4;
+                FillRoundedRectangle(e.Graphics, new SolidBrush(Color.FromArgb(48, 48, 48)), tmp, 4);
 
             }
 
@@ -1085,7 +1143,7 @@ namespace Cheat
 
             if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
             {
-               // e.Graphics.DrawEllipse(new Pen(new SolidBrush(Color.White), 2), new Rectangle(left, top, 10, 10));
+                // e.Graphics.DrawEllipse(new Pen(new SolidBrush(Color.White), 2), new Rectangle(left, top, 10, 10));
 
             }
             else
@@ -1132,9 +1190,9 @@ namespace Cheat
             }
 
             font.Dispose();
-            
-        }
 
+        }
+        */
         private void FillRoundedRectangle(Graphics graphics, Brush brush, Rectangle bounds, int cornerRadius)
         {
             if (graphics == null)
@@ -1179,33 +1237,39 @@ namespace Cheat
             path.CloseFigure();
             return path;
         }
-        public static string FirstLetterToUpperCase(string s)
-        {
-            if (string.IsNullOrEmpty(s))
-                throw new ArgumentException("There is no first letter");
 
-            char[] a = s.ToCharArray();
-            a[0] = char.ToUpper(a[0]);
-            return new string(a);
+
+
+
+        private void customListBox1_OnItemSelected(string ItemValue)
+        {
+            textBox1.Text = ItemValue;
         }
 
-        private void listBox1_KeyDown(object sender, KeyEventArgs e)
+        private void customListBox1_OnEnterPresssed(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.Escape && textBox1.Text.Trim() != string.Empty)
+            LoadCheat();
+        }
+
+        private void customListBox1_OnEscapePressed(object sender, KeyEventArgs e)
+        {
+
+            textBox1_KeyDown(sender, e);
+        }
+
+        private void customListBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+        }
+
+        private void customListBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (InvokeRequired)
             {
-                if (_initalState) { this.Close(); }
-
-                textBox1.Text = "";
-                _initalState = true;
-                listBox1.Visible = false;
-                return;
-
+                Invoke(new Action(() => { textBox1_KeyDown(sender, e); }));
             }
-        }
 
-        private void listBox1_Leave(object sender, EventArgs e)
-        {
-            System.Diagnostics.Trace.WriteLine("Lost focus");
+           
         }
     }
 }
