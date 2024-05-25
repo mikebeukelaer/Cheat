@@ -34,11 +34,11 @@ namespace Cheat
             // 
             // CustomListBox
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
             DoubleBuffered = true;
             Name = "CustomListBox";
             Size = new Size(148, 148);
             Load += CustomListBox_Load;
+            Scroll += CustomListBox_Scroll;
             SizeChanged += CustomListBox_SizeChanged;
             VisibleChanged += CustomListBox_VisibleChanged;
             Paint += CustomListBox_Paint;

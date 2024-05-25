@@ -26,7 +26,7 @@ namespace Cheat
         private int _topItemInList = 0;
         private Direction _direction;
 
-        public Dictionary<string,CUtils.FileInfo> FilesToFlag { set; private get; }
+        public Dictionary<string, CUtils.FileInfo> FilesToFlag { set; private get; }
 
 
 
@@ -48,11 +48,9 @@ namespace Cheat
         public CustomListBox()
         {
             InitializeComponent();
-            //  vScrollBar1.Visible = false;
-
+           
             _items = new List<string>();
-            //    vScrollBar1.Minimum = 0;
-            //    vScrollBar1.Value = 0;
+           
         }
 
 
@@ -61,6 +59,8 @@ namespace Cheat
 
         private void FireOnItemSelected()
         {
+            if(_items.Count == 0) { return; }
+
             if (OnItemSelected != null)
             {
                 OnItemSelected(_items[_selectedItem]);
@@ -69,9 +69,9 @@ namespace Cheat
 
         private void FireOnEnterPressed()
         {
-            if(OnEnterPresssed != null)
+            if (OnEnterPresssed != null)
             {
-                OnEnterPresssed(null,null);
+                OnEnterPresssed(null, null);
             }
         }
 
@@ -79,30 +79,16 @@ namespace Cheat
         {
             if (OnEscapePressed != null)
             {
-                OnEscapePressed(sender,e);
+                OnEscapePressed(sender, e);
             }
         }
 
         private Action<string> log = x => System.Diagnostics.Debug.WriteLine(x);
 
-        private void HideShowScrollBar()
-        {
-            //if (_shown)
-            //{
-            //    if (_items.Count * _itemHeight > this.ClientRectangle.Height)
-            //    {
-            //        vScrollBar1.Visible = true;
-            //    }
-            //    else
-            //    {
-            //        vScrollBar1.Visible = false;
-            //    }
-            //}
-        }
+
         public void Update()
         {
-            // vScrollBar1.Maximum = _items.Count;
-            HideShowScrollBar();
+
             DrawListBox();
             this.Invalidate();
         }
@@ -133,13 +119,14 @@ namespace Cheat
 
             if (!_shown) { return false; }
 
-            var bottomItemOnDisplayFully = _topItemInList + this.ClientRectangle.Height / _itemHeight -1 ;
+            var bottomItemOnDisplayFully = _topItemInList + this.ClientRectangle.Height / _itemHeight - 1;
             log($"bottomItemOnDisplayFully :  {bottomItemOnDisplayFully}");
             log($"selected {_selectedItem} : top {_topItemInList}");
-            if( _selectedItem < _topItemInList )
+            if (_selectedItem < _topItemInList)
             {
                 retVal = true;
-            }else if( _selectedItem > bottomItemOnDisplayFully)
+            }
+            else if (_selectedItem > bottomItemOnDisplayFully)
             {
                 retVal = true;
             }
@@ -147,102 +134,20 @@ namespace Cheat
 
             return retVal;
         }
-        private void Draw()
-        {
-            //var item = listBox1.Items[e.Index].ToString();
-            //item = CUtils.FirstLetterToUpperCase(item);
 
-            //e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            //e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-
-            //if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
-            //{
-
-            //    e.Graphics.FillRectangle(new SolidBrush(Configuration.BackColor), e.Bounds);
-            //}
-            //else
-            //{
-
-            //    var tmp = e.Bounds;
-            //    //   tmp.Inflate(-2,-2);
-            //    tmp.X = tmp.X + 2;
-            //    tmp.Y = tmp.Y + 2;
-            //    tmp.Width = tmp.Width - 10;
-            //    tmp.Height = tmp.Height - 4;
-            //    FillRoundedRectangle(e.Graphics, new SolidBrush(Color.FromArgb(48, 48, 48)), tmp, 4);
-
-            //}
-
-            //var left = e.Bounds.X + 2;
-            //var top = e.Bounds.Y + (e.Bounds.Height / 2) - (10 / 2);
-
-            //StringFormat stringFormat = new StringFormat();
-            //stringFormat.Alignment = StringAlignment.Near;
-            //stringFormat.LineAlignment = StringAlignment.Center;
-
-            //if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
-            //{
-            //    // e.Graphics.DrawEllipse(new Pen(new SolidBrush(Color.White), 2), new Rectangle(left, top, 10, 10));
-
-            //}
-            //else
-            //{
-            //    Rectangle rect1 = new Rectangle(e.Bounds.Left + 3, e.Bounds.Top + 15, 3, e.Bounds.Height - 30);
-            //    FillRoundedRectangle(e.Graphics, new SolidBrush(Color.FromArgb(30, 155, 250)), rect1, 2);
-
-            //}
-
-            //if (_filesToTags.ContainsKey(item.ToLower()))
-            //{
-            //    if (_filesToTags[item.ToLower()].AutoCopy)
-            //    {
-            //        var img = new Bitmap(Resources.copyto);
-            //        var imgRect = new Rectangle(e.Bounds.X + 15, e.Bounds.Y + 20, 16, 16);
-            //        e.Graphics.DrawImage(img, imgRect);
-            //    }
-
-            //}
-
-            //var rect = new Rectangle();
-            //rect.X = e.Bounds.Left + 40;
-            //rect.Y = e.Bounds.Y + 2;
-            //rect.Width = e.Bounds.Width - 80;
-            //rect.Height = e.Bounds.Height - 2;
-
-            //var font = new Font("Segoe UI", 12, FontStyle.Bold);
-
-            //e.Graphics.DrawString(item, font, new SolidBrush(Color.White), rect);
-
-            //var smallerFont = new Font("Segoe UI Semibold", 10);
-
-            //if (_filesToTags.ContainsKey(item.ToLower()))
-            //{
-            //    var tags = _filesToTags[item.ToLower()].Tags.Select(x => x.ToString()).ToArray();
-            //    var taglist = string.Join(", ", tags);
-            //    rect.Offset(2, 25);
-            //    e.Graphics.DrawString($"Tags: {taglist}", smallerFont, new SolidBrush(Color.White), rect); ;
-            //}
-            //else
-            //{
-            //    rect.Offset(2, 25);
-            //    e.Graphics.DrawString($"Tags: <none>", smallerFont, new SolidBrush(Color.Gray), rect); ;
-            //}
-
-            //font.Dispose();
-        }
         private void DrawListBox()
         {
-            var scrollBarWidth = 0;
+          
             if (!_shown) { return; }
-            //if (vScrollBar1.Visible)
-            //{
-            //    scrollBarWidth = vScrollBar1.Width;
-            //}
+
+            if( _items.Count == 0 ) {  return; }
+
+            if(this.ClientRectangle.Height == 0 || this.ClientRectangle.Width ==0  ) { return; }
 
             if (IsSelectedItemInView())
             {
                 log("Sould scroll into view");
-                if(_direction == Direction.Up)
+                if (_direction == Direction.Up)
                 {
                     _topItemInList--;
                 }
@@ -267,11 +172,14 @@ namespace Cheat
             {
                 string item = _items[index];
 
-                var rect = new Rectangle(2, currentTop, this.ClientRectangle.Width - scrollBarWidth - 4, _itemHeight);
+                var rect = new Rectangle(2, currentTop, this.ClientRectangle.Width - 8, _itemHeight);
 
                 StringFormat stringFormat = new StringFormat();
-                stringFormat.Alignment = StringAlignment.Near;
-                stringFormat.LineAlignment = StringAlignment.Center;
+               // stringFormat.Alignment = StringAlignment.Near;
+              //  stringFormat.LineAlignment = StringAlignment.Center;
+                stringFormat.Trimming = StringTrimming.EllipsisCharacter;
+                stringFormat.Trimming = StringTrimming.Character;
+                stringFormat.FormatFlags = StringFormatFlags.NoWrap;
 
                 if (index == _selectedItem)
                 {
@@ -285,7 +193,7 @@ namespace Cheat
                 else
                 {
                     g.FillRectangle(new SolidBrush(Configuration.BackColor), rect);
-                 
+
                 }
                 if (FilesToFlag.ContainsKey(item.ToLower()))
                 {
@@ -298,9 +206,6 @@ namespace Cheat
 
                 }
 
-              //  var font = new Font("Segoe UI", 12, FontStyle.Bold);
-              //  g.DrawString(item, font, new SolidBrush(Color.White), rect);
-
                 var rect1 = new Rectangle();
                 rect1.X = rect.Left + 40;
                 rect1.Y = rect.Y + 2;
@@ -309,7 +214,7 @@ namespace Cheat
 
                 var font = new Font("Segoe UI", 12, FontStyle.Bold);
 
-                g.DrawString(item, font, new SolidBrush(Color.White), rect1);
+                g.DrawString(item, font, new SolidBrush(Color.White), rect1, stringFormat);
 
                 var smallerFont = new Font("Segoe UI Semibold", 10);
 
@@ -318,16 +223,13 @@ namespace Cheat
                     var tags = FilesToFlag[item.ToLower()].Tags.Select(x => x.ToString()).ToArray();
                     var taglist = string.Join(", ", tags);
                     rect1.Offset(2, 25);
-                    g.DrawString($"Tags: {taglist}", smallerFont, new SolidBrush(Color.White), rect1); ;
+                    g.DrawString($"Tags: {taglist}", smallerFont, new SolidBrush(Color.White), rect1, stringFormat); ;
                 }
                 else
                 {
                     rect1.Offset(2, 25);
-                    g.DrawString($"Tags: <none>", smallerFont, new SolidBrush(Color.Gray), rect1); ;
+                    g.DrawString($"Tags: <none>", smallerFont, new SolidBrush(Color.Gray), rect1,stringFormat); ;
                 }
-
-
-
 
                 currentTop += _itemHeight;
 
@@ -341,8 +243,6 @@ namespace Cheat
         {
             if (!_shown) { return; }
 
-            //   vScrollBar1.Top = 0;
-            //   vScrollBar1.Height = this.ClientRectangle.Height;
             DrawListBox();
 
         }
@@ -357,15 +257,6 @@ namespace Cheat
             if (_shown) { CustomListBox_SizeChanged(null, null); };
         }
 
-        private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
-        {
-
-            log($"New Value in scroll event :{e.NewValue}");
-            //   log("scroll " + vScrollBar1.Value.ToString());
-            //  DrawListBox();
-            //  Invalidate();
-
-        }
 
         private void CustomListBox_Paint(object sender, PaintEventArgs e)
         {
@@ -422,13 +313,7 @@ namespace Cheat
             return path;
         }
 
-        private void vScrollBar1_ValueChanged(object sender, EventArgs e)
-        {
-            //  log("value changed " + vScrollBar1.Value.ToString());
-            DrawListBox();
-            Invalidate();
 
-        }
 
         private void CustomListBox_MouseDown(object sender, MouseEventArgs e)
         {
@@ -449,14 +334,15 @@ namespace Cheat
             switch (e.KeyCode)
             {
                 case Keys.Down:
-                    _selectedItem = _selectedItem == _items.Count - 1 ? _selectedItem : _selectedItem+ 1;
+                    _selectedItem = _selectedItem == _items.Count - 1 ? _selectedItem : _selectedItem + 1;
                     _direction = Direction.Down;
                     DrawListBox();
                     Invalidate();
                     FireOnItemSelected();
                     break;
                 case Keys.Up:
-                    _selectedItem = _selectedItem == 0 ? _selectedItem : _selectedItem-1;
+                    log("keyp up");
+                    _selectedItem = _selectedItem == 0 ? _selectedItem : _selectedItem - 1;
                     _direction = Direction.Up;
                     DrawListBox();
                     Invalidate();
@@ -488,6 +374,15 @@ namespace Cheat
                     break;
             }
 
+        }
+
+        private void CustomListBox_Scroll(object sender, ScrollEventArgs e)
+        {
+            log("int the scrolol");
+        }
+        public void KeyWasPressed(KeyEventArgs e)
+        {
+            this.CustomListBox_KeyDown(this, e);
         }
     }
 }
