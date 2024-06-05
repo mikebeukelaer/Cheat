@@ -72,6 +72,7 @@
             textBox2.Size = new System.Drawing.Size(706, 307);
             textBox2.TabIndex = 1;
             textBox2.TabStop = false;
+            textBox2.TextChanged += textBox2_TextChanged;
             textBox2.KeyDown += textBox2_KeyDown;
             // 
             // lblCopyIndicator
