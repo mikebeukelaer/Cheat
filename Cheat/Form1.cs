@@ -28,6 +28,7 @@ namespace Cheat
         private Dictionary<string, List<string>> _tags = new Dictionary<string, List<string>>();
 
         private Action<string> log = x => System.Diagnostics.Debug.WriteLine(x);
+        private List<string> _commands = new List<string>();
 
         protected struct FileInfo
         {
@@ -335,6 +336,16 @@ namespace Cheat
             }
         }
 
+        private void ShowLastUsedCommands(TextBox textBox) 
+        {
+            customListBox1.Visible = true;
+            customListBox1.Items = _commands;
+            customListBox1.ShowTags = false;
+            customListBox1.Update();
+            customListBox1.Invalidate();
+            customListBox1.Focus();
+            textBox1.Text = _commands[0];
+        }
 
 
         private void ShowSearch(TextBox textBox, TextBox input)
@@ -376,6 +387,7 @@ namespace Cheat
                   
                     customListBox1.Visible = true;
                     customListBox1.Items = _findList;
+                    customListBox1.ShowTags = true;
                     customListBox1.Update();
                     customListBox1.Invalidate();
                     customListBox1.Focus();
@@ -448,6 +460,7 @@ namespace Cheat
               
                 customListBox1.Visible = true;
                 customListBox1.Items = _findList;
+                customListBox1.ShowTags = true;
                 customListBox1.Update();
                 customListBox1.Invalidate();
                 customListBox1.Focus();
@@ -525,6 +538,7 @@ namespace Cheat
 
                 customListBox1.Visible = true;
                 customListBox1.Items = _findList;
+                customListBox1.ShowTags = false;
                 customListBox1.Update();
                 customListBox1.Invalidate();
                 customListBox1.Focus();
@@ -661,7 +675,8 @@ namespace Cheat
 
             if (e.KeyCode == Keys.Enter)
             {
-               
+
+                RecentCommands.Add(_commands, textBox1.Text.ToLower().TrimStart());
 
                 if (textBox1.Text.ToLower().TrimStart() == "--help")
                 {
@@ -717,6 +732,11 @@ namespace Cheat
                     return;
                 }
 
+                if (textBox1.Text.ToLower().TrimStart() == "--last")
+                {
+                    ShowLastUsedCommands(textBox2);
+                    return;
+                }
 
                 var appender = string.Empty;
                 if (File.Exists(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))

@@ -21,10 +21,14 @@ namespace Cheat
     {
         private List<string> _items;
         private bool _shown = false;
-        private int _itemHeight = 55;
+        private int _defaultItemHeight = 55;
+        private int _itemHeight = 55; 
+        private int _smallerItemHeight = 30;
         private int _selectedItem = 0;
         private int _topItemInList = 0;
+        private bool _showTags =true;
         private Direction _direction;
+        
 
         public Dictionary<string, CUtils.FileInfo> FilesToFlag { set; private get; }
 
@@ -48,12 +52,28 @@ namespace Cheat
         public CustomListBox()
         {
             InitializeComponent();
-           
+            ShowTags = true;
+            _itemHeight = _defaultItemHeight;
             _items = new List<string>();
            
         }
 
+        public bool ShowTags { get { return _showTags; }
+            set 
+            {
+                _showTags = value;
+                if (value)
+                {
+                    _itemHeight = _defaultItemHeight;
 
+                }
+                else
+                {
+                    _itemHeight = _smallerItemHeight;
+                }
+
+            }
+        }
 
         public List<string> Items { get { return _items; } set { _items = value; } }
 
@@ -135,6 +155,93 @@ namespace Cheat
             return retVal;
         }
 
+        private void DrawSmallerListBox()
+        {
+            if (!_shown) { return; }
+
+            if (_items.Count == 0) { return; }
+
+            if (this.ClientRectangle.Height == 0 || this.ClientRectangle.Width == 0) { return; }
+
+            if (IsSelectedItemInView())
+            {
+                log("Sould scroll into view");
+                if (_direction == Direction.Up)
+                {
+                    _topItemInList--;
+                }
+                else
+                {
+                    _topItemInList++;
+                }
+            }
+            else
+            {
+                log("Just shift the focus");
+            }
+
+
+            bitmap = new Bitmap(this.ClientRectangle.Width, this.ClientRectangle.Height);
+            Graphics g = Graphics.FromImage(bitmap);
+
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.TextRenderingHint = TextRenderingHint.AntiAlias;
+            var currentTop = 0;
+            for (int index = _topItemInList; index < _items.Count; index++)
+            {
+                string item = _items[index];
+
+                var rect = new Rectangle(2, currentTop, this.ClientRectangle.Width - 8, _itemHeight);
+
+                StringFormat stringFormat = new StringFormat();
+                // stringFormat.Alignment = StringAlignment.Near;
+                //  stringFormat.LineAlignment = StringAlignment.Center;
+                stringFormat.Trimming = StringTrimming.EllipsisCharacter;
+                stringFormat.Trimming = StringTrimming.Character;
+                stringFormat.FormatFlags = StringFormatFlags.NoWrap;
+
+                if (index == _selectedItem)
+                {
+
+                    FillRoundedRectangle(g, new SolidBrush(Color.FromArgb(48, 48, 48)), rect, 2);
+
+                    Rectangle rect2 = new Rectangle(rect.Left, rect.Top + 5, 3, rect.Height - 10);
+                    FillRoundedRectangle(g, new SolidBrush(Color.FromArgb(30, 155, 250)), rect2, 2);
+
+                }
+                else
+                {
+                    g.FillRectangle(new SolidBrush(Configuration.BackColor), rect);
+
+                }
+                if (FilesToFlag.ContainsKey(item.ToLower()))
+                {
+                    if (FilesToFlag[item.ToLower()].AutoCopy)
+                    {
+                        var img = new Bitmap(Resources.copyto);
+                        var imgRect = new Rectangle(rect.X + 15, rect.Y + 20, 16, 16);
+                        g.DrawImage(img, imgRect);
+                    }
+
+                }
+
+                var font = new Font("Segoe UI", 12, FontStyle.Bold);
+
+                var rect1 = new Rectangle();
+                rect1.X = rect.Left + 40;
+                rect1.Y = rect.Y + rect.Height / 2 - Font.Height / 2;
+                rect1.Width = rect.Width - 80;
+                rect1.Height = rect.Height - 2;
+
+
+                g.DrawString(item, font, new SolidBrush(Color.White), rect1, stringFormat);
+
+
+                currentTop += _itemHeight;
+
+            }
+        }
+
         private void DrawListBox()
         {
           
@@ -143,6 +250,13 @@ namespace Cheat
             if( _items.Count == 0 ) {  return; }
 
             if(this.ClientRectangle.Height == 0 || this.ClientRectangle.Width ==0  ) { return; }
+
+            if(!ShowTags)
+            {
+                DrawSmallerListBox();
+                return;
+            }
+
 
             if (IsSelectedItemInView())
             {
@@ -206,16 +320,17 @@ namespace Cheat
 
                 }
 
+                var font = new Font("Segoe UI", 12, FontStyle.Bold);
+
                 var rect1 = new Rectangle();
                 rect1.X = rect.Left + 40;
                 rect1.Y = rect.Y + 2;
                 rect1.Width = rect.Width - 80;
                 rect1.Height = rect.Height - 2;
 
-                var font = new Font("Segoe UI", 12, FontStyle.Bold);
-
                 g.DrawString(item, font, new SolidBrush(Color.White), rect1, stringFormat);
 
+                
                 var smallerFont = new Font("Segoe UI Semibold", 10);
 
                 if (FilesToFlag.ContainsKey(item.ToLower()))
@@ -230,6 +345,8 @@ namespace Cheat
                     rect1.Offset(2, 25);
                     g.DrawString($"Tags: <none>", smallerFont, new SolidBrush(Color.Gray), rect1,stringFormat); ;
                 }
+                
+
 
                 currentTop += _itemHeight;
 
