@@ -338,13 +338,14 @@ namespace Cheat
 
         private void ShowLastUsedCommands(TextBox textBox) 
         {
-            customListBox1.Visible = true;
-            customListBox1.Items = _commands;
-            customListBox1.ShowTags = false;
-            customListBox1.Update();
-            customListBox1.Invalidate();
-            customListBox1.Focus();
-            textBox1.Text = _commands[0];
+            ShowResults(_commands);
+            //customListBox1.Visible = true;
+            //customListBox1.Items = _commands;
+            //customListBox1.ShowTags = false;
+            //customListBox1.Update();
+            //customListBox1.Invalidate();
+            //customListBox1.Focus();
+            //textBox1.Text = _commands[0];
         }
 
 
@@ -384,18 +385,34 @@ namespace Cheat
                 }
                 if (_findList.Count > 0)
                 {
-                  
-                    customListBox1.Visible = true;
-                    customListBox1.Items = _findList;
-                    customListBox1.ShowTags = true;
-                    customListBox1.Update();
-                    customListBox1.Invalidate();
-                    customListBox1.Focus();
-                    textBox1.Text = _findList[0];
+                  ShowResults(_findList);
+                    //customListBox1.Visible = true;
+                    //customListBox1.Items = _findList;
+                    //customListBox1.ShowTags = true;
+                    //customListBox1.Update();
+                    //customListBox1.Invalidate();
+                    //customListBox1.Focus();
+                    //textBox1.Text = _findList[0];
+                    //textBox1.Focus();
+                    //textBox1.SelectionLength = 0;
                     
                 }
             }
         }
+
+        private void ShowResults(List<string> results) 
+        {
+            customListBox1.Visible = true;
+            customListBox1.Items = results;
+            customListBox1.ShowTags = true;
+            customListBox1.Update();
+            customListBox1.Invalidate();
+            customListBox1.Focus();
+            textBox1.Text = results[0];
+            textBox1.Focus();
+            textBox1.SelectionLength = 0;
+        }
+
 
 
         private void ShowHelp(TextBox textBox)
@@ -457,14 +474,14 @@ namespace Cheat
             }
             if (_findList.Count > 0)
             {
-              
-                customListBox1.Visible = true;
-                customListBox1.Items = _findList;
-                customListBox1.ShowTags = true;
-                customListBox1.Update();
-                customListBox1.Invalidate();
-                customListBox1.Focus();
-                textBox1.Text = _findList[0];
+              ShowResults(_findList);
+                //customListBox1.Visible = true;
+                //customListBox1.Items = _findList;
+                //customListBox1.ShowTags = true;
+                //customListBox1.Update();
+                //customListBox1.Invalidate();
+                //customListBox1.Focus();
+                //textBox1.Text = _findList[0];
 
             }
 
@@ -534,16 +551,7 @@ namespace Cheat
             }
             if (_findList.Count > 0)
             {
-                
-
-                customListBox1.Visible = true;
-                customListBox1.Items = _findList;
-                customListBox1.ShowTags = false;
-                customListBox1.Update();
-                customListBox1.Invalidate();
-                customListBox1.Focus();
-                textBox1.Text = _findList[0];
-
+                ShowResults(_findList);
             }
         }
 
@@ -566,7 +574,7 @@ namespace Cheat
             log($"in the text changed event state is  {_initalState}");
             if (textBox1.Text == string.Empty && !_initalState)
             {
-                Console.WriteLine("Text changed");
+                log("Text changed");
                 textBox1.Text = "Start typing...";
                 _initalState = true;
             }
@@ -577,7 +585,7 @@ namespace Cheat
                 textBox1.SelectionStart = 0;
                 textBox1.SelectionLength = 0;
                 _isChanging = false;
-                Console.WriteLine($"In the if and setting the cursor {textBox1.SelectionStart}");
+                log($"In the if and setting the cursor {textBox1.SelectionStart}");
             }
 
         }
@@ -667,7 +675,7 @@ namespace Cheat
             {
                 // Clear the text of the "Start typing and then continue"
                 //
-                Console.WriteLine("key down .. clearing the text");
+                log("key down .. clearing the text");
                 textBox1.Text = "";
                 Console.WriteLine("key down .. about to set _initialstate");
                 _initalState = false;
@@ -1054,7 +1062,7 @@ namespace Cheat
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
             this.Refresh();
-            textBox2.Width = this.Width - 30;
+            textBox2.Width = this.Width - 15;
             textBox2.Height = this.Height - 60;
             textBox1.Width = this.Width - 80;
           

@@ -111,6 +111,7 @@
             customListBox1.Items = (System.Collections.Generic.List<string>)resources.GetObject("customListBox1.Items");
             customListBox1.Location = new System.Drawing.Point(3, 51);
             customListBox1.Name = "customListBox1";
+            customListBox1.ShowTags = true;
             customListBox1.Size = new System.Drawing.Size(704, 177);
             customListBox1.TabIndex = 6;
             customListBox1.OnItemSelected += customListBox1_OnItemSelected;
