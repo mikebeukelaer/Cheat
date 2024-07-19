@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 #pragma warning disable CA1416
 namespace Cheat
@@ -23,12 +24,15 @@ namespace Cheat
         //
         private bool _initalState = true;
         private bool _isChanging = false;
+        private bool _isBackspace;
+        private bool _isEscape;
 
         private string[] _fileNames;
         private Dictionary<string, List<string>> _tags = new Dictionary<string, List<string>>();
 
         private Action<string> log = x => System.Diagnostics.Debug.WriteLine(x);
         private List<string> _commands = new List<string>();
+        private  bool _useCustomTypeahead;
 
         protected struct FileInfo
         {
@@ -52,6 +56,310 @@ namespace Cheat
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             
             textBox2.MouseWheel += TextBox2_MouseWheel;
+
+            _useCustomTypeahead = true;
+            if (_useCustomTypeahead)
+            {
+                textBox1.KeyDown -= textBox1_KeyDown;
+                textBox1.TextChanged -= textBox1_TextChanged;
+                textBox1.KeyDown += TextBox1_CustomKeyDown;
+                textBox1.TextChanged += TextBox1_CustomTextChanged;
+            }
+
+
+
+        }
+
+        private void TextBox1_CustomTextChanged(object sender, EventArgs e)
+        {
+            log($"in the custom text changed event .. text is {textBox1.Text}");
+            log($"in the custom text changed event initialstate is  {_initalState}");
+
+
+            if (_isChanging) { _isChanging = false; return; }
+
+            if (textBox1.Text == string.Empty)
+            {
+                log("Found empty!!!!!!!");
+                _isChanging = true;
+                textBox1.Text = "Start Typing...";
+                textBox1.SelectionStart = 0;
+                _initalState = true;
+                return;
+
+            }
+
+            List<string> _commands = new List<string>() { "--edit", "--find" };
+
+            _initalState = false;
+            Console.WriteLine("Not changing ... ");
+            //searching the first candidate 
+            // string typed = textBox4.Text.Substring(0, textBox4.SelectionStart);
+            var leftIndex = 0;
+
+            var currentCommand = string.Empty;
+            var newTyped = string.Empty;
+            foreach (var s in _commands)
+            {
+                if (textBox1.Text.StartsWith(s + " "))
+                {
+
+                    currentCommand = s + " ";
+                    leftIndex = currentCommand.Length; // - 1;
+                    Console.WriteLine($"Found command {s} : left index : {leftIndex}");
+                    break;
+                }
+            }
+
+
+
+            newTyped = textBox1.Text.Substring(leftIndex).Trim();
+
+            var candidateList = new List<string>();
+            candidateList = _fileNames.Where
+                (
+                    item =>
+                        item.StartsWith(newTyped, StringComparison.OrdinalIgnoreCase)
+                     && item != newTyped
+                ).ToList<string>();
+
+            log($"Size of candidate list {candidateList.Count}");
+
+            foreach (var item in candidateList)
+            {
+
+                log($"Searching for {newTyped} against {item}");
+
+                if (newTyped != string.Empty &&
+                    item.StartsWith(newTyped, StringComparison.OrdinalIgnoreCase))
+                {
+                    log($"Found {item}, it begins with {newTyped}");
+
+                    if (item.Length >= newTyped.Length)
+                    {
+                        // Update the text with the found item and highlight 
+                        // the balance
+                        //
+                        var diff = item.Length - newTyped.Length;
+                        var newselestart = item.Length - diff;
+                        var newselelength = diff + 1;
+
+                        _isChanging = true;
+                        textBox1.Text = currentCommand + item;
+                        textBox1.SelectionStart = newselestart + leftIndex;
+                        textBox1.SelectionLength = newselelength;
+                        // _isInIntialState = false;
+                        break;
+                    }
+                }
+            }
+
+
+
+
+
+            //if (textBox1.Text == string.Empty && !_initalState)
+            //{
+            //    log("Text changed");
+            //    textBox1.Text = "Start typing...";
+            //    _initalState = true;
+            //}
+            //if (_isChanging)
+            //{
+
+            //    textBox1.Select(0, 0);
+            //    textBox1.SelectionStart = 0;
+            //    textBox1.SelectionLength = 0;
+            //    _isChanging = false;
+            //    log($"In the if and setting the cursor {textBox1.SelectionStart}");
+            //}
+        }
+
+        private void TextBox1_CustomKeyDown(object sender, KeyEventArgs e)
+        {
+            log($"Custom Keydown {e.KeyCode}");
+            log($"Custom Keydown : initialstate : {_initalState}");
+            _isBackspace = e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete;
+            _isEscape = e.KeyCode == Keys.Escape;
+
+            if (_isEscape && _initalState)
+            {
+                log("Doing nothing just returning... Should close the dialog now");
+                this.Close();
+                return;
+            }
+
+            if (_initalState) //&& textBox4.Text != string.Empty)
+            {
+                log("Clearing the initial text");
+                _isChanging = true;
+                textBox1.Text = "";
+                _initalState = false;
+                return;
+            }
+
+
+
+            if (e.KeyCode == Keys.Down)
+            {
+                customListBox1.KeyWasPressed(e);
+
+                return;
+            }
+            else if (e.KeyCode == Keys.Up)
+            {
+                customListBox1.KeyWasPressed(e);
+
+                return;
+            }
+            else
+            {
+                _findList = new List<string>();
+                _findListIndex = 0;
+
+                customListBox1.Visible = false;
+            }
+
+            if (e.KeyCode == Keys.Escape && textBox1.Text.Trim() != string.Empty)
+            {
+                if (_initalState) { this.Close(); }
+
+                textBox1.Text = "";
+                _initalState = true;
+
+                customListBox1.Visible = false;
+                return;
+
+            }
+            if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
+            {
+                return;
+            }
+            if (e.KeyCode == Keys.Escape)
+            {
+                this.Close();
+            }
+
+
+            if (_initalState)
+            {
+                // Clear the text of the "Start typing and then continue"
+                //
+                log("Custom key down .. clearing the text");
+                textBox1.Text = "";
+                Console.WriteLine("key down .. about to set _initialstate");
+                _initalState = false;
+            }
+
+            if (e.KeyCode == Keys.Enter)
+            {
+
+                RecentCommands.Add(_commands, textBox1.Text.ToLower().TrimStart());
+
+                if (textBox1.Text.ToLower().TrimStart() == "--help")
+                {
+                    ShowHelp(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--list")
+                {
+                    ShowList(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--config")
+                {
+
+                    ShowConfig(textBox2);
+                    return;
+                }
+                if (textBox1.Text.ToLower().TrimStart() == "--editconfig")
+                {
+                    EditConfig(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--tags")
+                {
+                    ShowTags(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.Length >= 12 && textBox1.Text.ToLower().Substring(0, 12).TrimStart() == "--listcheats")
+                {
+                    ShowListTags(textBox2, textBox1);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--version")
+                {
+                    ShowVersion(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--edit")
+                {
+                    ShowEditor(textBox1);
+                    return;
+                }
+
+                if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--find")
+                {
+                    ShowSearch(textBox2, textBox1);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--last")
+                {
+                    ShowLastUsedCommands(textBox2);
+                    return;
+                }
+
+                var appender = string.Empty;
+                if (File.Exists(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
+                {
+                    textBox2.Clear();
+                    var contents = File.ReadAllLines(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}");
+
+                    var autoCopyFlag = GetAutoCopyFlag(contents);
+
+                    var index = SkipConfig(contents);
+
+                    if (index > 0 && index <= contents.Length - 1)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = index; i < contents.Length; i++)
+                        {
+                            sb.Append(contents[i]);
+                            sb.Append(Environment.NewLine);
+                        }
+                        textBox2.Text = sb.ToString();
+                    }
+                    else
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        foreach (var c in contents)
+                        {
+                            sb.Append(c);
+                            sb.Append(Environment.NewLine);
+                        }
+                        textBox2.Text = sb.ToString();
+                    }
+
+                    if (autoCopyFlag)
+                    {
+                        picCopy.Visible = true;
+                        Clipboard.SetText(textBox2.Text);
+                    }
+                    else
+                    {
+                        picCopy.Visible = false;
+                    }
+
+
+                }
+            }
         }
 
         private void TextBox2_MouseWheel(object sender, MouseEventArgs e)
@@ -226,14 +534,17 @@ namespace Cheat
                 statusMessage = "Loading files";
                 DirSearch(Configuration.FilesLocation, Path.GetFileName(Configuration.FilesLocation), tmplist);
                 _fileNames = tmplist.ToArray();
+                if(!_useCustomTypeahead)
+                {
+                    textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
 
-                textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                    AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
+                    suggestions.AddRange(_fileNames);
+                    textBox1.AutoCompleteCustomSource = suggestions;
 
-                AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
-                suggestions.AddRange(_fileNames);
-                textBox1.AutoCompleteCustomSource = suggestions;
-
+                }
+                _isChanging = true;
                 textBox1.Text = "Start typing...";
                 textBox1.Select(0, 0);
                 statusMessage = "Setting location";
@@ -336,7 +647,7 @@ namespace Cheat
             }
         }
 
-        private void ShowLastUsedCommands(TextBox textBox) 
+        private void ShowLastUsedCommands(System.Windows.Forms.TextBox textBox) 
         {
             ShowResults(_commands);
             //customListBox1.Visible = true;
@@ -349,7 +660,7 @@ namespace Cheat
         }
 
 
-        private void ShowSearch(TextBox textBox, TextBox input)
+        private void ShowSearch(System.Windows.Forms.TextBox textBox, System.Windows.Forms.TextBox input)
         {
             // Grab the parameter
             //
@@ -415,7 +726,7 @@ namespace Cheat
 
 
 
-        private void ShowHelp(TextBox textBox)
+        private void ShowHelp(System.Windows.Forms.TextBox textBox)
         {
             textBox.Clear();
 
@@ -461,7 +772,7 @@ namespace Cheat
         }
         #region Commands
 
-        private void ShowList(TextBox textBox)
+        private void ShowList(System.Windows.Forms.TextBox textBox)
         {
             textBox.Clear();
             _findList.Clear();
@@ -487,7 +798,7 @@ namespace Cheat
 
         }
 
-        private void ShowConfig(TextBox textBox)
+        private void ShowConfig(System.Windows.Forms.TextBox textBox)
         {
             textBox.Clear();
             textBox.Text = "Configuration File:" + Environment.NewLine;
@@ -504,14 +815,14 @@ namespace Cheat
 
         }
 
-        private void EditConfig(TextBox textBox)
+        private void EditConfig(System.Windows.Forms.TextBox textBox)
         {
             Process.Start(Configuration.Editor, $"{Configuration.ConfigFilePath}\\Config.xml");
             textBox.Clear();
 
         }
 
-        private void ShowTags(TextBox textBox)
+        private void ShowTags(System.Windows.Forms.TextBox textBox)
         {
             textBox.Clear();
             textBox.Text = "Current Tags:" + Environment.NewLine;
@@ -520,14 +831,14 @@ namespace Cheat
                 textBox.Text += "  " + t.Key + Environment.NewLine;
             }
         }
-        private void ShowVersion(TextBox textBox)
+        private void ShowVersion(System.Windows.Forms.TextBox textBox)
         {
             textBox.Clear();
             var productVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             textBox.Text = Environment.NewLine + $" Version :{productVersion}";
         }
 
-        private void ShowListTags(TextBox textBox, TextBox input)
+        private void ShowListTags(System.Windows.Forms.TextBox textBox, System.Windows.Forms.TextBox input)
         {
             // Grab the paramater
             //
@@ -555,7 +866,7 @@ namespace Cheat
             }
         }
 
-        private void ShowEditor(TextBox input)
+        private void ShowEditor(System.Windows.Forms.TextBox input)
         {
             // Grab the paramater
             //
@@ -597,49 +908,13 @@ namespace Cheat
             if (e.KeyCode == Keys.Down)
             {
                 customListBox1.KeyWasPressed(e);
-                //if (_findList.Count > 0)
-                //{
-                //    _findListIndex++;
-                //    if (_findListIndex < 0)
-                //    {
-                //        _findListIndex = _findList.Count;
-                //    }
-                //    if (_findListIndex >= _findList.Count)
-                //    {
-                //        _findListIndex = 0;
-                //    }
-                 
-                //    //textBox1.Text = _findList[_findListIndex];
 
-                //    //textBox1.SelectAll();
-
-                //    //e.SuppressKeyPress = true;
-                //}
                 return;
             }
             else if (e.KeyCode == Keys.Up)
             {
                 customListBox1.KeyWasPressed(e);
-                //if (_findList.Count > 0)
-                //{
-                //    _findListIndex--;
 
-                //    if (_findListIndex < 0)
-                //    {
-                //        _findListIndex = _findList.Count - 1;
-                //    }
-                //    if (_findListIndex >= _findList.Count)
-                //    {
-                //        _findListIndex = 0;
-                //    }
-                   
-                //    //textBox1.Text = _findList[_findListIndex];
-
-                //    //textBox1.SelectAll();
-
-
-                //    //e.SuppressKeyPress = true;
-                //}
                 return;
             }
             else
@@ -989,7 +1264,7 @@ namespace Cheat
         }
 
 
-        private void AutoSizeTextBox(TextBox txt)
+        private void AutoSizeTextBox(System.Windows.Forms.TextBox txt)
         {
             Size dimensions = GetTextDimensions(txt, txt.Font, txt.Text);
 
