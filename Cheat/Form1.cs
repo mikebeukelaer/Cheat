@@ -75,7 +75,7 @@ namespace Cheat
             log($"in the custom text changed event .. text is {textBox1.Text}");
             log($"in the custom text changed event initialstate is  {_initalState}");
 
-
+            if (_isBackspace) { _isBackspace = false; return; }
             if (_isChanging) { _isChanging = false; return; }
 
             if (textBox1.Text == string.Empty)
