@@ -29,8 +29,10 @@ namespace Cheat
 
         private string[] _fileNames;
         private Dictionary<string, List<string>> _tags = new Dictionary<string, List<string>>();
+        private List<string> _candidateList;
+        private int _candidateListIndex;
 
-        private Action<string> log = x => System.Diagnostics.Debug.WriteLine(x);
+        private Action<string> log = x => System.Diagnostics.Debug.WriteLine($"{DateTime.Now.ToString("hh:mm:ss.ff")} : {x}");
         private List<string> _commands = new List<string>();
         private  bool _useCustomTypeahead;
 
@@ -75,6 +77,12 @@ namespace Cheat
             log($"in the custom text changed event .. text is {textBox1.Text}");
             log($"in the custom text changed event initialstate is  {_initalState}");
 
+            if (_isBackspace)
+            {
+                log("Backspace Doing nothing just returning... Should close the dialog now");
+                _isBackspace = false;
+                return;
+            }
 
             if (_isChanging) { _isChanging = false; return; }
 
@@ -111,21 +119,19 @@ namespace Cheat
                 }
             }
 
-
-
             newTyped = textBox1.Text.Substring(leftIndex).Trim();
 
-            var candidateList = new List<string>();
-            candidateList = _fileNames.Where
+            _candidateList = new List<string>();
+            _candidateList = _fileNames.Where
                 (
                     item =>
                         item.StartsWith(newTyped, StringComparison.OrdinalIgnoreCase)
                      && item != newTyped
                 ).ToList<string>();
 
-            log($"Size of candidate list {candidateList.Count}");
+            log($"Size of candidate list {_candidateList.Count}");
 
-            foreach (var item in candidateList)
+            foreach (var item in _candidateList)
             {
 
                 log($"Searching for {newTyped} against {item}");
@@ -154,25 +160,6 @@ namespace Cheat
                 }
             }
 
-
-
-
-
-            //if (textBox1.Text == string.Empty && !_initalState)
-            //{
-            //    log("Text changed");
-            //    textBox1.Text = "Start typing...";
-            //    _initalState = true;
-            //}
-            //if (_isChanging)
-            //{
-
-            //    textBox1.Select(0, 0);
-            //    textBox1.SelectionStart = 0;
-            //    textBox1.SelectionLength = 0;
-            //    _isChanging = false;
-            //    log($"In the if and setting the cursor {textBox1.SelectionStart}");
-            //}
         }
 
         private void TextBox1_CustomKeyDown(object sender, KeyEventArgs e)
@@ -181,6 +168,17 @@ namespace Cheat
             log($"Custom Keydown : initialstate : {_initalState}");
             _isBackspace = e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete;
             _isEscape = e.KeyCode == Keys.Escape;
+
+            if (e.KeyCode == Keys.Up)
+            {
+                if (_candidateList != null && _candidateList.Count > 0)
+                {
+                    log($"Scrolling up in candidate list : current index {_candidateListIndex}" );
+
+                }
+                return;
+            }
+
 
             if (_isEscape && _initalState)
             {
