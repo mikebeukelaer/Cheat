@@ -325,6 +325,13 @@ namespace Cheat
                     return;
                 }
 
+                if (textBox1.Text.ToLower().TrimStart() == "--refresh")
+                {
+                    ReloadFileList();
+                    return;
+                }
+
+
                 var appender = string.Empty;
                 if (File.Exists(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
                 {
@@ -572,6 +579,28 @@ namespace Cheat
                 Application.Exit();
             }
 
+        }
+        private void ReloadFileList()
+        {
+            var tmplist = new List<string>();
+            DirSearch(Configuration.FilesLocation, Path.GetFileName(Configuration.FilesLocation), tmplist);
+         
+            _fileNames = tmplist.ToArray();
+
+            if (!_useCustomTypeahead)
+            {
+                textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
+
+                AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
+                suggestions.AddRange(_fileNames);
+                textBox1.AutoCompleteCustomSource = suggestions;
+
+            }
+            _isChanging = true;
+            textBox1.Text = "Start typing...";
+            _initalState = true;
+            textBox1.Select(0, 0);
         }
 
         private void SetLocation()
@@ -1231,10 +1260,6 @@ namespace Cheat
 
         }
 
-
-
-
-
         private List<string> ExtractTags(string[] fileContents)
         {
             List<string> retVal = null;
@@ -1311,6 +1336,8 @@ namespace Cheat
                 //this.Close();
                 textBox1_KeyDown(null, e);
                 textBox1.Focus();
+                textBox1.SelectionStart = 0; //  textBox1.Text.Length;
+                textBox1.SelectionLength = 0;
             }
         }
 
