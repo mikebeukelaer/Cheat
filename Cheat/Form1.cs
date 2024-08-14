@@ -26,11 +26,12 @@ namespace Cheat
         private bool _isChanging = false;
         private bool _isBackspace;
         private bool _isEscape;
+        private bool _debugMode = true;
 
         private string[] _fileNames;
         private Dictionary<string, List<string>> _tags = new Dictionary<string, List<string>>();
 
-        private Action<string> log = x => System.Diagnostics.Debug.WriteLine(x);
+        private Action<string> log; 
         private List<string> _commands = new List<string>();
         private  bool _useCustomTypeahead;
 
@@ -52,6 +53,7 @@ namespace Cheat
             this.FormBorderStyle = FormBorderStyle.None;
             picCopy.Visible = false;
            
+            SetupLogging();
             customListBox1.Visible = false;
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             
@@ -65,10 +67,19 @@ namespace Cheat
                 textBox1.KeyDown += TextBox1_CustomKeyDown;
                 textBox1.TextChanged += TextBox1_CustomTextChanged;
             }
-
-
-
         }
+
+        private void SetupLogging()
+        {
+            log = delegate (string msg) 
+            { 
+                if (_debugMode) 
+                { 
+                    System.Diagnostics.Debug.WriteLine(msg); 
+                } 
+            };
+        }
+
 
         private void TextBox1_CustomTextChanged(object sender, EventArgs e)
         {
@@ -1299,7 +1310,9 @@ namespace Cheat
         {
             if (e.KeyCode == Keys.Escape)
             {
-                this.Close();
+                //this.Close();
+                textBox1_KeyDown(null, e);
+                textBox1.Focus();
             }
         }
 
