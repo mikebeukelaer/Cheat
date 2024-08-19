@@ -547,24 +547,7 @@ namespace Cheat
                 var files = Directory.GetFiles(Configuration.FilesLocation);
                 
                 ReloadFileList();
-                
-                //var tmplist = new List<string>();
-                //statusMessage = "Loading files";
-                //DirSearch(Configuration.FilesLocation, Path.GetFileName(Configuration.FilesLocation), tmplist);
-                //_fileNames = tmplist.ToArray();
-                //if(!_useCustomTypeahead)
-                //{
-                //    textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                //    textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
 
-                //    AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
-                //    suggestions.AddRange(_fileNames);
-                //    textBox1.AutoCompleteCustomSource = suggestions;
-
-                //}
-                //_isChanging = true;
-                //textBox1.Text = "Start typing...";
-                //textBox1.Select(0, 0);
                 statusMessage = "Setting location";
                 SetLocation();
                 if (Properties.Settings.Default.ShowHelp)
