@@ -1,17 +1,13 @@
-﻿using Cheat.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 #pragma warning disable CA1416
 namespace Cheat
@@ -20,6 +16,7 @@ namespace Cheat
     {
         private bool _mouseDown;
         private Point _lastLocation;
+
         // Used to indicate the "Start Typing..." is on display
         //
         private bool _initalState = true;
@@ -36,6 +33,7 @@ namespace Cheat
         private Action<string> log; 
         private List<string> _commands = new List<string>();
         private  bool _useCustomTypeahead;
+        private bool _includeReadMe;
 
         protected struct FileInfo
         {
@@ -56,6 +54,7 @@ namespace Cheat
             picCopy.Visible = false;
            
             SetupLogging();
+            log("Form Initialization Start");
             customListBox1.Visible = false;
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             
@@ -69,6 +68,7 @@ namespace Cheat
                 textBox1.KeyDown += TextBox1_CustomKeyDown;
                 textBox1.TextChanged += TextBox1_CustomTextChanged;
             }
+            log("Form Initialization End");
         }
 
         private void SetupLogging()
@@ -77,7 +77,7 @@ namespace Cheat
             { 
                 if (_debugMode) 
                 { 
-                    System.Diagnostics.Debug.WriteLine(msg); 
+                    System.Diagnostics.Debug.WriteLine($"{DateTime.Now.ToString()}: {msg}"); 
                 } 
             };
         }
@@ -108,7 +108,7 @@ namespace Cheat
 
             }
 
-            List<string> _commands = new List<string>() { "--edit", "--find" };
+            List<string> _commands = new List<string>() { "--edit" };//, "--find" }; //
 
             _initalState = false;
             Console.WriteLine("Not changing ... ");
@@ -180,15 +180,15 @@ namespace Cheat
             _isBackspace = e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete;
             _isEscape = e.KeyCode == Keys.Escape;
 
-            if (e.KeyCode == Keys.Up)
-            {
-                if (_candidateList != null && _candidateList.Count > 0)
-                {
-                    log($"Scrolling up in candidate list : current index {_candidateListIndex}" );
+            //if (e.KeyCode == Keys.Up)
+            //{
+            //    if (_candidateList != null && _candidateList.Count > 0)
+            //    {
+            //        log($"Scrolling up in candidate list : current index {_candidateListIndex}" );
 
-                }
-                return;
-            }
+            //    }
+            //    return;
+            //}
 
 
             if (_isEscape && _initalState)
@@ -319,7 +319,7 @@ namespace Cheat
                     return;
                 }
 
-                if (textBox1.Text.ToLower().TrimStart() == "--last")
+                if (textBox1.Text.ToLower().TrimStart() == "--history")
                 {
                     ShowLastUsedCommands(textBox2);
                     return;
@@ -504,6 +504,10 @@ namespace Cheat
                     if (dirName == string.Empty)
                     {
                         Console.WriteLine($"{Path.GetFileName(f)}");
+                        if(!_includeReadMe && Path.GetFileName(f) == "Readme")
+                        {
+                            continue;
+                        }
                         list.Add($"{Path.GetFileName(f)}");
                     }
                     else
@@ -532,6 +536,7 @@ namespace Cheat
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            log("Form_Load Start");
             var statusMessage = string.Empty;
             try
             {
@@ -543,7 +548,7 @@ namespace Cheat
 
                 var tmpFont = new Font(textBox2.Font.Name, Configuration.FontSizePt);
                 textBox2.Font = tmpFont;
-                statusMessage = $"reading filesLocaton : {Configuration.FilesLocation}";
+                statusMessage = $"reading filesLocaton : {Configuration.FilesLocation}";   
                 var files = Directory.GetFiles(Configuration.FilesLocation);
                 
                 ReloadFileList();
@@ -555,7 +560,7 @@ namespace Cheat
                     textBox2.Text = "Try --help to start....";
                     Properties.Settings.Default.ShowHelp = false;
                 }
-
+                log("Form_Load Done");
 
             }
             catch (Exception)
@@ -673,13 +678,6 @@ namespace Cheat
         private void ShowLastUsedCommands(System.Windows.Forms.TextBox textBox) 
         {
             ShowResults(_commands);
-            //customListBox1.Visible = true;
-            //customListBox1.Items = _commands;
-            //customListBox1.ShowTags = false;
-            //customListBox1.Update();
-            //customListBox1.Invalidate();
-            //customListBox1.Focus();
-            //textBox1.Text = _commands[0];
         }
 
 
@@ -784,6 +782,10 @@ namespace Cheat
             sb.Append("--find <text>");
             sb.Append(Environment.NewLine);
             sb.Append("   Lists all cheats containing <text>");
+            sb.Append(Environment.NewLine);
+            sb.Append("--history");
+            sb.Append(Environment.NewLine);
+            sb.Append("   Lists the last n commands");
             sb.Append(Environment.NewLine);
             sb.Append("--version");
             sb.Append(Environment.NewLine);
@@ -1038,7 +1040,7 @@ namespace Cheat
                     return;
                 }
 
-                if (textBox1.Text.ToLower().TrimStart() == "--last")
+                if (textBox1.Text.ToLower().TrimStart() == "--history")
                 {
                     ShowLastUsedCommands(textBox2);
                     return;
