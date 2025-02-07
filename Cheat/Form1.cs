@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 #pragma warning disable CA1416
 namespace Cheat
@@ -343,6 +344,128 @@ namespace Cheat
                     return;
                 }
 
+
+                var appender = string.Empty;
+                if (File.Exists(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
+                {
+                    textBox2.Clear();
+                    var contents = File.ReadAllLines(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}");
+
+                    var autoCopyFlag = GetAutoCopyFlag(contents);
+
+                    var index = SkipConfig(contents);
+
+                    if (index > 0 && index <= contents.Length - 1)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = index; i < contents.Length; i++)
+                        {
+                            sb.Append(contents[i]);
+                            sb.Append(Environment.NewLine);
+                        }
+                        textBox2.Text = sb.ToString();
+                    }
+                    else
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        foreach (var c in contents)
+                        {
+                            sb.Append(c);
+                            sb.Append(Environment.NewLine);
+                        }
+                        textBox2.Text = sb.ToString();
+                    }
+
+                    if (autoCopyFlag)
+                    {
+                        picCopy.Visible = true;
+                        Clipboard.SetText(textBox2.Text);
+                    }
+                    else
+                    {
+                        picCopy.Visible = false;
+                    }
+
+
+                }
+            }
+        }
+
+
+            if (_initalState)
+            {
+                // Clear the text of the "Start typing and then continue"
+                //
+                log("Custom key down .. clearing the text");
+                textBox1.Text = "";
+                Console.WriteLine("key down .. about to set _initialstate");
+                _initalState = false;
+            }
+
+            if (e.KeyCode == Keys.Enter)
+            {
+
+                RecentCommands.Add(_commands, textBox1.Text.ToLower().TrimStart());
+
+                if (textBox1.Text.ToLower().TrimStart() == "--help")
+                {
+                    ShowHelp(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--list")
+                {
+                    ShowList(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--config")
+                {
+
+                    ShowConfig(textBox2);
+                    return;
+                }
+                if (textBox1.Text.ToLower().TrimStart() == "--editconfig")
+                {
+                    EditConfig(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--tags")
+                {
+                    ShowTags(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.Length >= 12 && textBox1.Text.ToLower().Substring(0, 12).TrimStart() == "--listcheats")
+                {
+                    ShowListTags(textBox2, textBox1);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--version")
+                {
+                    ShowVersion(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--edit")
+                {
+                    ShowEditor(textBox1);
+                    return;
+                }
+
+                if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--find")
+                {
+                    ShowSearch(textBox2, textBox1);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--last")
+                {
+                    ShowLastUsedCommands(textBox2);
+                    return;
+                }
 
                 var appender = string.Empty;
                 if (File.Exists(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
