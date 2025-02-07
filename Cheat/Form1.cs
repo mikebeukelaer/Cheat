@@ -1,14 +1,11 @@
-﻿using Cheat.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -20,21 +17,24 @@ namespace Cheat
     {
         private bool _mouseDown;
         private Point _lastLocation;
+
         // Used to indicate the "Start Typing..." is on display
         //
         private bool _initalState = true;
         private bool _isChanging = false;
         private bool _isBackspace;
         private bool _isEscape;
+        private bool _debugMode = true;
 
         private string[] _fileNames;
         private Dictionary<string, List<string>> _tags = new Dictionary<string, List<string>>();
         private List<string> _candidateList;
         private int _candidateListIndex;
 
-        private Action<string> log = x => System.Diagnostics.Debug.WriteLine($"{DateTime.Now.ToString("hh:mm:ss.ff")} : {x}");
+        private Action<string> log; 
         private List<string> _commands = new List<string>();
         private  bool _useCustomTypeahead;
+        private bool _includeReadMe;
 
         protected struct FileInfo
         {
@@ -54,6 +54,8 @@ namespace Cheat
             this.FormBorderStyle = FormBorderStyle.None;
             picCopy.Visible = false;
            
+            SetupLogging();
+            log("Form Initialization Start");
             customListBox1.Visible = false;
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             
@@ -67,19 +69,29 @@ namespace Cheat
                 textBox1.KeyDown += TextBox1_CustomKeyDown;
                 textBox1.TextChanged += TextBox1_CustomTextChanged;
             }
-
-
-
+            log("Form Initialization End");
         }
+
+        private void SetupLogging()
+        {
+            log = delegate (string msg) 
+            { 
+                if (_debugMode) 
+                { 
+                    System.Diagnostics.Debug.WriteLine($"{DateTime.Now.ToString()}: {msg}"); 
+                } 
+            };
+        }
+
 
         private void TextBox1_CustomTextChanged(object sender, EventArgs e)
         {
-            log($"in the custom text changed event .. text is {textBox1.Text}");
-            log($"in the custom text changed event initialstate is  {_initalState}");
+            log($"TextBox1_CustomTextChanged : text is {textBox1.Text}");
+            log($"TextBox1_CustomTextChanged : initialstate is  {_initalState}");
 
             if (_isBackspace)
             {
-                log("Backspace Doing nothing just returning... Should close the dialog now");
+                log("TextBox1_CustomTextChanged : Backspace Doing nothing just returning... Should close the dialog now");
                 _isBackspace = false;
                 return;
             }
@@ -88,7 +100,7 @@ namespace Cheat
 
             if (textBox1.Text == string.Empty)
             {
-                log("Found empty!!!!!!!");
+                log("TextBox1_CustomTextChanged : Found empty!!!!!!!");
                 _isChanging = true;
                 textBox1.Text = "Start Typing...";
                 textBox1.SelectionStart = 0;
@@ -97,10 +109,10 @@ namespace Cheat
 
             }
 
-            List<string> _commands = new List<string>() { "--edit", "--find" };
+            List<string> _commands = new List<string>() { "--edit" }; //, "--find" };
 
             _initalState = false;
-            Console.WriteLine("Not changing ... ");
+            log("TextBox1_CustomTextChanged : Not changing ... ");
             //searching the first candidate 
             // string typed = textBox4.Text.Substring(0, textBox4.SelectionStart);
             var leftIndex = 0;
@@ -114,7 +126,7 @@ namespace Cheat
 
                     currentCommand = s + " ";
                     leftIndex = currentCommand.Length; // - 1;
-                    Console.WriteLine($"Found command {s} : left index : {leftIndex}");
+                    Console.WriteLine($"TextBox1_CustomTextChanged : Found command {s} : left index : {leftIndex}");
                     break;
                 }
             }
@@ -126,11 +138,15 @@ namespace Cheat
                 (
                     item =>
                         item.StartsWith(newTyped, StringComparison.OrdinalIgnoreCase)
-                     && item != newTyped
+                    // && item != newTyped
                 ).ToList<string>();
 
-            log($"Size of candidate list {_candidateList.Count}");
-
+            log($"TextBox1_CustomTextChanged : Size of candidate list {_candidateList.Count}");
+            if (_candidateList.Count > 0)
+            {
+                ShowViewOnlyResults(_candidateList);
+                return;
+            }
             foreach (var item in _candidateList)
             {
 
@@ -169,15 +185,15 @@ namespace Cheat
             _isBackspace = e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete;
             _isEscape = e.KeyCode == Keys.Escape;
 
-            if (e.KeyCode == Keys.Up)
-            {
-                if (_candidateList != null && _candidateList.Count > 0)
-                {
-                    log($"Scrolling up in candidate list : current index {_candidateListIndex}" );
+            //if (e.KeyCode == Keys.Up)
+            //{
+            //    if (_candidateList != null && _candidateList.Count > 0)
+            //    {
+            //        log($"Scrolling up in candidate list : current index {_candidateListIndex}" );
 
-                }
-                return;
-            }
+            //    }
+            //    return;
+            //}
 
 
             if (_isEscape && _initalState)
@@ -237,6 +253,143 @@ namespace Cheat
             {
                 this.Close();
             }
+
+
+            if (_initalState)
+            {
+                // Clear the text of the "Start typing and then continue"
+                //
+                log("Custom key down .. clearing the text");
+                textBox1.Text = "";
+                Console.WriteLine("key down .. about to set _initialstate");
+                _initalState = false;
+            }
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                log($"Custom keydown : enter pressed");
+
+                RecentCommands.Add(_commands, textBox1.Text.ToLower().TrimStart());
+
+                var selectedText = customListBox1.SelectedItem?.ToString();
+                if (customListBox1.Visible && selectedText != null)
+                {
+                    _isChanging = true;
+                    textBox1.Text = customListBox1.SelectedItem.ToString();
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--help")
+                {
+                    ShowHelp(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--list")
+                {
+                    ShowList(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--config")
+                {
+
+                    ShowConfig(textBox2);
+                    return;
+                }
+                if (textBox1.Text.ToLower().TrimStart() == "--editconfig")
+                {
+                    EditConfig(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--tags")
+                {
+                    ShowTags(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.Length >= 12 && textBox1.Text.ToLower().Substring(0, 12).TrimStart() == "--listcheats")
+                {
+                    ShowListTags(textBox2, textBox1);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--version")
+                {
+                    ShowVersion(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--edit")
+                {
+                    ShowEditor(textBox1);
+                    return;
+                }
+
+                if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--find")
+                {
+                    ShowSearch(textBox2, textBox1);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--history")
+                {
+                    ShowLastUsedCommands(textBox2);
+                    return;
+                }
+
+                if (textBox1.Text.ToLower().TrimStart() == "--refresh")
+                {
+                    ReloadFileList();
+                    return;
+                }
+
+
+                var appender = string.Empty;
+                if (File.Exists(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}"))
+                {
+                    textBox2.Clear();
+                    var contents = File.ReadAllLines(Configuration.FilesLocation + $"\\{textBox1.Text.TrimStart()}{appender}");
+
+                    var autoCopyFlag = GetAutoCopyFlag(contents);
+
+                    var index = SkipConfig(contents);
+
+                    if (index > 0 && index <= contents.Length - 1)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = index; i < contents.Length; i++)
+                        {
+                            sb.Append(contents[i]);
+                            sb.Append(Environment.NewLine);
+                        }
+                        textBox2.Text = sb.ToString();
+                    }
+                    else
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        foreach (var c in contents)
+                        {
+                            sb.Append(c);
+                            sb.Append(Environment.NewLine);
+                        }
+                        textBox2.Text = sb.ToString();
+                    }
+
+                    if (autoCopyFlag)
+                    {
+                        picCopy.Visible = true;
+                        Clipboard.SetText(textBox2.Text);
+                    }
+                    else
+                    {
+                        picCopy.Visible = false;
+                    }
+
+
+                }
+            }
+        }
 
 
             if (_initalState)
@@ -486,6 +639,10 @@ namespace Cheat
                     if (dirName == string.Empty)
                     {
                         Console.WriteLine($"{Path.GetFileName(f)}");
+                        if(!_includeReadMe && Path.GetFileName(f) == "Readme")
+                        {
+                            continue;
+                        }
                         list.Add($"{Path.GetFileName(f)}");
                     }
                     else
@@ -514,6 +671,7 @@ namespace Cheat
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            log("Form_Load Start");
             var statusMessage = string.Empty;
             try
             {
@@ -525,26 +683,11 @@ namespace Cheat
 
                 var tmpFont = new Font(textBox2.Font.Name, Configuration.FontSizePt);
                 textBox2.Font = tmpFont;
-                statusMessage = $"reading filesLocaton : {Configuration.FilesLocation}";
+                statusMessage = $"reading filesLocaton : {Configuration.FilesLocation}";   
                 var files = Directory.GetFiles(Configuration.FilesLocation);
+                
+                ReloadFileList();
 
-                var tmplist = new List<string>();
-                statusMessage = "Loading files";
-                DirSearch(Configuration.FilesLocation, Path.GetFileName(Configuration.FilesLocation), tmplist);
-                _fileNames = tmplist.ToArray();
-                if(!_useCustomTypeahead)
-                {
-                    textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                    textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
-
-                    AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
-                    suggestions.AddRange(_fileNames);
-                    textBox1.AutoCompleteCustomSource = suggestions;
-
-                }
-                _isChanging = true;
-                textBox1.Text = "Start typing...";
-                textBox1.Select(0, 0);
                 statusMessage = "Setting location";
                 SetLocation();
                 if (Properties.Settings.Default.ShowHelp)
@@ -552,7 +695,7 @@ namespace Cheat
                     textBox2.Text = "Try --help to start....";
                     Properties.Settings.Default.ShowHelp = false;
                 }
-
+                log("Form_Load Done");
 
             }
             catch (Exception)
@@ -561,6 +704,28 @@ namespace Cheat
                 Application.Exit();
             }
 
+        }
+        private void ReloadFileList()
+        {
+            var tmplist = new List<string>();
+            DirSearch(Configuration.FilesLocation, Path.GetFileName(Configuration.FilesLocation), tmplist);
+         
+            _fileNames = tmplist.ToArray();
+
+            if (!_useCustomTypeahead)
+            {
+                textBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
+
+                AutoCompleteStringCollection suggestions = new AutoCompleteStringCollection();
+                suggestions.AddRange(_fileNames);
+                textBox1.AutoCompleteCustomSource = suggestions;
+
+            }
+            _isChanging = true;
+            textBox1.Text = "Start typing...";
+            _initalState = true;
+            textBox1.Select(0, 0);
         }
 
         private void SetLocation()
@@ -648,13 +813,6 @@ namespace Cheat
         private void ShowLastUsedCommands(System.Windows.Forms.TextBox textBox) 
         {
             ShowResults(_commands);
-            //customListBox1.Visible = true;
-            //customListBox1.Items = _commands;
-            //customListBox1.ShowTags = false;
-            //customListBox1.Update();
-            //customListBox1.Invalidate();
-            //customListBox1.Focus();
-            //textBox1.Text = _commands[0];
         }
 
 
@@ -683,11 +841,9 @@ namespace Cheat
                     foreach (var line in contents)
                     {
 
-                        if (line.ToLower().Contains(param))
+                        if (line.ToLower().Contains(param) || line.ToLower().Contains(cheat.ToLower()))
                         {
-                            //  textBox.Text += cheat + Environment.NewLine;
                             _findList.Add(cheat);
-                          
                             break;
                         }
                     }
@@ -695,16 +851,6 @@ namespace Cheat
                 if (_findList.Count > 0)
                 {
                   ShowResults(_findList);
-                    //customListBox1.Visible = true;
-                    //customListBox1.Items = _findList;
-                    //customListBox1.ShowTags = true;
-                    //customListBox1.Update();
-                    //customListBox1.Invalidate();
-                    //customListBox1.Focus();
-                    //textBox1.Text = _findList[0];
-                    //textBox1.Focus();
-                    //textBox1.SelectionLength = 0;
-                    
                 }
             }
         }
@@ -719,6 +865,21 @@ namespace Cheat
             customListBox1.Focus();
             textBox1.Text = results[0];
             textBox1.Focus();
+            textBox1.SelectionLength = 0;
+        }
+        private void ShowViewOnlyResults(List<string> results)
+        {
+            customListBox1.Visible = true;
+            customListBox1.Items = results;
+            customListBox1.ShowTags = true;
+            customListBox1.ViewOnly = true;
+            customListBox1.Update();
+            customListBox1.Invalidate();
+            customListBox1.Focus();
+            customListBox1.ResetSelectedItem();
+            //textBox1.Text = results[0];
+            textBox1.Focus();
+            textBox1.SelectionStart = textBox1.Text.Length ;
             textBox1.SelectionLength = 0;
         }
 
@@ -1013,7 +1174,7 @@ namespace Cheat
                     return;
                 }
 
-                if (textBox1.Text.ToLower().TrimStart() == "--last")
+                if (textBox1.Text.ToLower().TrimStart() == "--history")
                 {
                     ShowLastUsedCommands(textBox2);
                     return;
@@ -1166,7 +1327,7 @@ namespace Cheat
 
         public int SkipUntil(string[] contents, string findthis, int startingAtIndex)
         {
-            while (startingAtIndex < contents.Length && contents[startingAtIndex] != findthis)
+            while (startingAtIndex < contents.Length && !contents[startingAtIndex].StartsWith(findthis))
             {
                 startingAtIndex++;
             }
@@ -1219,10 +1380,6 @@ namespace Cheat
             return retVal;
 
         }
-
-
-
-
 
         private List<string> ExtractTags(string[] fileContents)
         {
@@ -1297,7 +1454,11 @@ namespace Cheat
         {
             if (e.KeyCode == Keys.Escape)
             {
-                this.Close();
+                //this.Close();
+                textBox1_KeyDown(null, e);
+                textBox1.Focus();
+                textBox1.SelectionStart = 0; //  textBox1.Text.Length;
+                textBox1.SelectionLength = 0;
             }
         }
 
@@ -1409,6 +1570,7 @@ namespace Cheat
 
         private void customListBox1_OnItemSelected(string ItemValue)
         {
+            _isChanging = true; // customListBox1.ViewOnly;
             textBox1.Text = ItemValue;
         }
 

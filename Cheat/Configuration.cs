@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace Cheat
@@ -17,6 +16,7 @@ namespace Cheat
         public static Color BackColor;
         public static Color ForeColor;
         public static int FontSizePt = 10;
+        public static bool IncludeReadme;
 
         static Configuration()
         {
@@ -70,6 +70,8 @@ namespace Cheat
                         FontSizePt : 
                         14;
 
+                    IncludeReadme =
+                        configfile.DocumentElement.SelectSingleNode("includereadme").InnerText.ToLower() == "true" ? true : false;
                 }
                 else
                 {
