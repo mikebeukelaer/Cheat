@@ -27,6 +27,7 @@ namespace Cheat
         private int _selectedItem = 0;
         private int _topItemInList = 0;
         private bool _showTags =true;
+        private bool _viewOnly = false;
         private Direction _direction;
         
 
@@ -74,17 +75,36 @@ namespace Cheat
 
             }
         }
+        public bool ViewOnly { set { _viewOnly = value; } get { return _viewOnly; } }
 
         public List<string> Items { get { return _items; } set { _items = value; } }
 
         private void FireOnItemSelected()
         {
+            //if (_viewOnly)
+            //{
+            //    return;
+            //}
+                
             if(_items.Count == 0) { return; }
 
             if (OnItemSelected != null)
             {
                 OnItemSelected(_items[_selectedItem]);
             }
+        }
+
+        public string SelectedItem {
+            get 
+            { 
+                if(_items.Count == 0) return null;
+
+                return _items?[_selectedItem];
+            }
+        }
+        public void ResetSelectedItem()
+        {
+            _selectedItem = 0;
         }
 
         private void FireOnEnterPressed()
@@ -447,7 +467,7 @@ namespace Cheat
 
         private void CustomListBox_KeyDown(object sender, KeyEventArgs e)
         {
-            log($"Keydown {e.KeyCode}");
+            log($"CustomListBox_KeyDown {e.KeyCode}");
             switch (e.KeyCode)
             {
                 case Keys.Down:

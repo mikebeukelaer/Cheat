@@ -85,12 +85,12 @@ namespace Cheat
 
         private void TextBox1_CustomTextChanged(object sender, EventArgs e)
         {
-            log($"in the custom text changed event .. text is {textBox1.Text}");
-            log($"in the custom text changed event initialstate is  {_initalState}");
+            log($"TextBox1_CustomTextChanged : text is {textBox1.Text}");
+            log($"TextBox1_CustomTextChanged : initialstate is  {_initalState}");
 
             if (_isBackspace)
             {
-                log("Backspace Doing nothing just returning... Should close the dialog now");
+                log("TextBox1_CustomTextChanged : Backspace Doing nothing just returning... Should close the dialog now");
                 _isBackspace = false;
                 return;
             }
@@ -99,7 +99,7 @@ namespace Cheat
 
             if (textBox1.Text == string.Empty)
             {
-                log("Found empty!!!!!!!");
+                log("TextBox1_CustomTextChanged : Found empty!!!!!!!");
                 _isChanging = true;
                 textBox1.Text = "Start Typing...";
                 textBox1.SelectionStart = 0;
@@ -108,10 +108,10 @@ namespace Cheat
 
             }
 
-            List<string> _commands = new List<string>() { "--edit", "--find" };
+            List<string> _commands = new List<string>() { "--edit" }; //, "--find" };
 
             _initalState = false;
-            Console.WriteLine("Not changing ... ");
+            log("TextBox1_CustomTextChanged : Not changing ... ");
             //searching the first candidate 
             // string typed = textBox4.Text.Substring(0, textBox4.SelectionStart);
             var leftIndex = 0;
@@ -125,7 +125,7 @@ namespace Cheat
 
                     currentCommand = s + " ";
                     leftIndex = currentCommand.Length; // - 1;
-                    Console.WriteLine($"Found command {s} : left index : {leftIndex}");
+                    Console.WriteLine($"TextBox1_CustomTextChanged : Found command {s} : left index : {leftIndex}");
                     break;
                 }
             }
@@ -137,11 +137,15 @@ namespace Cheat
                 (
                     item =>
                         item.StartsWith(newTyped, StringComparison.OrdinalIgnoreCase)
-                     && item != newTyped
+                    // && item != newTyped
                 ).ToList<string>();
 
-            log($"Size of candidate list {_candidateList.Count}");
-
+            log($"TextBox1_CustomTextChanged : Size of candidate list {_candidateList.Count}");
+            if (_candidateList.Count > 0)
+            {
+                ShowViewOnlyResults(_candidateList);
+                return;
+            }
             foreach (var item in _candidateList)
             {
 
@@ -185,6 +189,7 @@ namespace Cheat
                 if (_candidateList != null && _candidateList.Count > 0)
                 {
                     log($"Scrolling up in candidate list : current index {_candidateListIndex}" );
+                    customListBox1.KeyWasPressed(e);
 
                 }
                 return;
@@ -262,8 +267,16 @@ namespace Cheat
 
             if (e.KeyCode == Keys.Enter)
             {
+                log($"Custom keydown : enter pressed");
 
                 RecentCommands.Add(_commands, textBox1.Text.ToLower().TrimStart());
+
+                var selectedText = customListBox1.SelectedItem?.ToString();
+                if (customListBox1.Visible && selectedText != null)
+                {
+                    _isChanging = true;
+                    textBox1.Text = customListBox1.SelectedItem.ToString();
+                }
 
                 if (textBox1.Text.ToLower().TrimStart() == "--help")
                 {
@@ -673,13 +686,6 @@ namespace Cheat
         private void ShowLastUsedCommands(System.Windows.Forms.TextBox textBox) 
         {
             ShowResults(_commands);
-            //customListBox1.Visible = true;
-            //customListBox1.Items = _commands;
-            //customListBox1.ShowTags = false;
-            //customListBox1.Update();
-            //customListBox1.Invalidate();
-            //customListBox1.Focus();
-            //textBox1.Text = _commands[0];
         }
 
 
@@ -708,11 +714,9 @@ namespace Cheat
                     foreach (var line in contents)
                     {
 
-                        if (line.ToLower().Contains(param))
+                        if (line.ToLower().Contains(param) || line.ToLower().Contains(cheat.ToLower()))
                         {
-                            //  textBox.Text += cheat + Environment.NewLine;
                             _findList.Add(cheat);
-                          
                             break;
                         }
                     }
@@ -720,16 +724,6 @@ namespace Cheat
                 if (_findList.Count > 0)
                 {
                   ShowResults(_findList);
-                    //customListBox1.Visible = true;
-                    //customListBox1.Items = _findList;
-                    //customListBox1.ShowTags = true;
-                    //customListBox1.Update();
-                    //customListBox1.Invalidate();
-                    //customListBox1.Focus();
-                    //textBox1.Text = _findList[0];
-                    //textBox1.Focus();
-                    //textBox1.SelectionLength = 0;
-                    
                 }
             }
         }
@@ -744,6 +738,21 @@ namespace Cheat
             customListBox1.Focus();
             textBox1.Text = results[0];
             textBox1.Focus();
+            textBox1.SelectionLength = 0;
+        }
+        private void ShowViewOnlyResults(List<string> results)
+        {
+            customListBox1.Visible = true;
+            customListBox1.Items = results;
+            customListBox1.ShowTags = true;
+            customListBox1.ViewOnly = true;
+            customListBox1.Update();
+            customListBox1.Invalidate();
+            customListBox1.Focus();
+            customListBox1.ResetSelectedItem();
+            //textBox1.Text = results[0];
+            textBox1.Focus();
+            textBox1.SelectionStart = textBox1.Text.Length ;
             textBox1.SelectionLength = 0;
         }
 
@@ -784,6 +793,10 @@ namespace Cheat
             sb.Append("--find <text>");
             sb.Append(Environment.NewLine);
             sb.Append("   Lists all cheats containing <text>");
+            sb.Append(Environment.NewLine);
+            sb.Append("--refresh");
+            sb.Append(Environment.NewLine);
+            sb.Append("   Reloads file list");
             sb.Append(Environment.NewLine);
             sb.Append("--version");
             sb.Append(Environment.NewLine);
@@ -1434,6 +1447,7 @@ namespace Cheat
 
         private void customListBox1_OnItemSelected(string ItemValue)
         {
+            _isChanging = true; // customListBox1.ViewOnly;
             textBox1.Text = ItemValue;
         }
 
