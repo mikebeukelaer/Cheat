@@ -1,18 +1,11 @@
-﻿using Accessibility;
-using Cheat.Properties;
+﻿using Cheat.Properties;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Cheat
@@ -471,6 +464,7 @@ namespace Cheat
             switch (e.KeyCode)
             {
                 case Keys.Down:
+                    log("CustomListBox_KeyDown : DOWN");
                     _selectedItem = _selectedItem == _items.Count - 1 ? _selectedItem : _selectedItem + 1;
                     _direction = Direction.Down;
                     DrawListBox();
@@ -478,7 +472,7 @@ namespace Cheat
                     FireOnItemSelected();
                     break;
                 case Keys.Up:
-                    log("keyp up");
+                    log("CustomListBox_KeyDown : UP");
                     _selectedItem = _selectedItem == 0 ? _selectedItem : _selectedItem - 1;
                     _direction = Direction.Up;
                     DrawListBox();
@@ -486,13 +480,14 @@ namespace Cheat
                     FireOnItemSelected();
                     break;
                 case Keys.Enter:
-                    log($"Enter pressed : iem is {_items[_selectedItem]}");
+                    log($"CustomListBox_KeyDown : ENTER pressed : item is {_items[_selectedItem]}");
                     FireOnEscapePressed(sender, e);
                     DrawListBox();
                     Invalidate();
                     FireOnItemSelected();
                     break;
                 case Keys.Escape:
+                    log("CustomListBox_KeyDown : ESC");
                     FireOnEscapePressed(sender, e);
                     break;
             }
@@ -515,7 +510,7 @@ namespace Cheat
 
         private void CustomListBox_Scroll(object sender, ScrollEventArgs e)
         {
-            log("int the scrolol");
+            log("int the scroll");
         }
         public void KeyWasPressed(KeyEventArgs e)
         {
