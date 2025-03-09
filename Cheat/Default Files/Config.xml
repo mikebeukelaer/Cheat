@@ -7,4 +7,5 @@
   <forecolor>255,255,255</forecolor>
   <autocopytoclipboard>true</autocopytoclipboard>
   <mainfontsize>10</mainfontsize>
+  <includereadme>true</includereadme>
 </config>
