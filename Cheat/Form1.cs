@@ -611,47 +611,29 @@ namespace Cheat
 
         private void SetLocation()
         {
-            if (Properties.Settings.Default.Maximized)
+            // Check location to see if it is offscreen
+            //
+            var sc = Screen.FromControl(this);
+            var loc = Properties.Settings.Default.Location;
+            if (Properties.Settings.Default.Location.X > sc.WorkingArea.Width)
             {
-                Location = Properties.Settings.Default.Location;
-                WindowState = FormWindowState.Maximized;
-                Size = Properties.Settings.Default.Size;
+                loc.X = sc.WorkingArea.Width / 2;
             }
-            else if (Properties.Settings.Default.Minimised)
+            if (Properties.Settings.Default.Location.Y > sc.WorkingArea.Height)
             {
-                Location = Properties.Settings.Default.Location;
-                WindowState = FormWindowState.Minimized;
-                Size = Properties.Settings.Default.Size;
+                loc.X = sc.WorkingArea.Height / 2;
             }
-            else
-            {
-                Location = Properties.Settings.Default.Location;
-            }
+
+            Location = loc;
+
+            Size = Properties.Settings.Default.Size;
+
         }
 
         private void SaveLocation()
         {
-            if (WindowState == FormWindowState.Maximized)
-            {
-                Properties.Settings.Default.Location = RestoreBounds.Location;
-                Properties.Settings.Default.Size = RestoreBounds.Size;
-                Properties.Settings.Default.Maximized = true;
-                Properties.Settings.Default.Minimised = false;
-            }
-            else if (WindowState == FormWindowState.Normal)
-            {
-                Properties.Settings.Default.Location = Location;
-                Properties.Settings.Default.Size = Size;
-                Properties.Settings.Default.Maximized = false;
-                Properties.Settings.Default.Minimised = false;
-            }
-            else
-            {
-                Properties.Settings.Default.Location = RestoreBounds.Location;
-                Properties.Settings.Default.Size = RestoreBounds.Size;
-                Properties.Settings.Default.Maximized = false;
-                Properties.Settings.Default.Minimised = true;
-            }
+            Properties.Settings.Default.Location = Location;
+            Properties.Settings.Default.Size = Size;
             Properties.Settings.Default.Save();
         }
         private void ResizeHeightOfListBox(ListBox listBox)
@@ -662,10 +644,24 @@ namespace Cheat
         }
         private void BuildTagList(string fileName, string pathName, string rootDir)
         {
-            var contents = File.ReadAllLines(fileName);
+            //var contents = File.ReadAllLines(fileName);
+            var count = 0;
+            List<string> contents = new List<string>();
+            using (StreamReader sr = new StreamReader(fileName))
+            {
+                string? line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    contents.Add(line);
+                    count++;
+                    if (count == 3) { break; }
+                }
+            }
+            if (count != 3) { return; }
+
             var pname = Path.GetFileName(fileName);
             var fName = pathName == rootDir ? Path.GetFileName(fileName) : $"{pathName}/{Path.GetFileName(fileName)}";
-            var tags = ExtractTagsII(contents);
+            var tags = ExtractTagsII(contents.ToArray());
 
             if (tags != null)
             {
@@ -681,7 +677,7 @@ namespace Cheat
                     }
 
                 }
-                var autoCopy = GetAutoCopyFlag(contents);
+                var autoCopy = GetAutoCopyFlag(contents.ToArray());
 
                 _filesToTags[fName.ToLower()] =
                     new CUtils.FileInfo
@@ -722,7 +718,7 @@ namespace Cheat
                     foreach (var line in contents)
                     {
 
-                        if (line.ToLower().Contains(param) || line.ToLower().Contains(cheat.ToLower()))
+                        if (line.ToLower().Contains(param) || (cheat.ToLower().Contains(param)))
                         {
                             _findList.Add(cheat);
                             break;
@@ -735,6 +731,8 @@ namespace Cheat
                 }
             }
         }
+
+
 
         private void ShowResults(List<string> results) 
         {
@@ -754,14 +752,18 @@ namespace Cheat
             customListBox1.Items = results;
             customListBox1.ShowTags = true;
             customListBox1.ViewOnly = true;
-            customListBox1.Update();
-            customListBox1.Invalidate();
-            customListBox1.Focus();
+            
             customListBox1.ResetSelectedItem();
-            //textBox1.Text = results[0];
+            
+            customListBox1.Update();
+            customListBox1.Focus();
+
             textBox1.Focus();
             textBox1.SelectionStart = textBox1.Text.Length ;
             textBox1.SelectionLength = 0;
+            _isChanging = true;
+            textBox1.Text = customListBox1.Items[0];
+            _isChanging = false;
         }
 
 
@@ -825,7 +827,7 @@ namespace Cheat
             }
             if (_findList.Count > 0)
             {
-              ShowResults(_findList);
+              ShowViewOnlyResults(_findList);
                 //customListBox1.Visible = true;
                 //customListBox1.Items = _findList;
                 //customListBox1.ShowTags = true;

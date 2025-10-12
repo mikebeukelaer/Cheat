@@ -98,6 +98,7 @@ namespace Cheat
         public void ResetSelectedItem()
         {
             _selectedItem = 0;
+            _topItemInList = 0;
         }
 
         private void FireOnEnterPressed()
