@@ -328,7 +328,8 @@ namespace Cheat
 
                 if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--find")
                 {
-                    ShowSearch(textBox2, textBox1);
+                    //ShowSearch(textBox2, textBox1);
+                    ShowSearchWithTrie(textBox2,textBox1);
                     return;
                 }
 
@@ -732,7 +733,54 @@ namespace Cheat
             }
         }
 
+        private void ShowSearchWithTrie(System.Windows.Forms.TextBox textBox, System.Windows.Forms.TextBox input)
+        {
+            // Grab the parameter
+            //
+            if (input.Text.Length >= 7)
+            {
+                var param = input.Text.ToLower().Substring(7).Trim();
 
+                if (param.Length < 3)
+                {
+                    textBox.Clear();
+                    textBox.Text = "Search requires phrases at least 3 chars in length";
+                    return;
+                }
+
+                textBox.Clear();
+                _findList.Clear();
+
+                foreach (var cheat in _fileNames)
+                {
+                    log($"Seaching {cheat}");
+                    var contents = File.ReadAllLines($"{Configuration.FilesLocation}\\{cheat}");
+
+                    var trie = new Trie();
+
+                    foreach (var line in contents)
+                    {
+
+                        foreach (var word in line.Split(' '))
+                        {
+                            log($"Adding word : {word}");
+
+                            trie.AddWord(word.ToLower());
+                        }
+
+                    }
+                    if (trie.Search(param))
+                    {
+                        _findList.Add(cheat);
+                        break;
+                    }
+                }
+                if (_findList.Count > 0)
+                {
+                    ShowResults(_findList);
+                }
+            }
+        }
 
         private void ShowResults(List<string> results) 
         {
@@ -1053,7 +1101,8 @@ namespace Cheat
 
                 if (textBox1.Text.Length >= 6 && textBox1.Text.ToLower().Substring(0, 6).TrimStart() == "--find")
                 {
-                    ShowSearch(textBox2, textBox1);
+                    //ShowSearch(textBox2, textBox1);
+                    ShowSearchWithTrie(textBox2, textBox1);
                     return;
                 }
 
